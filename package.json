@@ -1,0 +1,25 @@
+{
+  "name": "cpts_489_project",
+  "version": "1.0.0",
+  "description": "Project for WSU's CPTS 389 Web Development course. A dynamic, database-driven, JavaScript web application will be complete by the end of the semester",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "npx tailwindcss -i ./css/input.css -o ./public/output.css",
+    "watch:css": "npx tailwindcss -i ./css/input.css -o ./public/output.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/koguma100/CPTS_489_Project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/koguma100/CPTS_489_Project/issues"
+  },
+  "homepage": "https://github.com/koguma100/CPTS_489_Project#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.4.19"
+  }
+}
