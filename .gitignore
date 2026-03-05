@@ -5,3 +5,7 @@
 .env.production.local
 
 config/env.js
+
+node_modules/
+
+public/output.css
