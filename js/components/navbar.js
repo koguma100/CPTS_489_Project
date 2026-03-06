@@ -1,7 +1,7 @@
 class NavbarComponent extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-    <header class="bg-black shadow-lg">
+    <header class="bg-midnight-violet shadow-lg">
         <div class="px-6 py-3 flex items-center justify-between">
 
             <div class="flex items-center gap-8">
@@ -14,7 +14,7 @@ class NavbarComponent extends HTMLElement {
                    <!-- Discover -->
                     <a href="index.html"
                         class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl
-                                text-white font-semibold bg-gradient-to-r from-green-700 to-green-500
+                                text-white font-semibold bg-jungle-green
                                 shadow ring-1 ring-white/15 hover:brightness-110 transition">
                         <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
                         <!-- Leaf icon -->
@@ -28,7 +28,7 @@ class NavbarComponent extends HTMLElement {
                     <!-- Learn -->
                     <a href="#"
                         class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl
-                                text-white font-semibold bg-gradient-to-r from-amber-800 to-amber-500
+                                text-white font-semibold bg-blaze-orange
                                 shadow ring-1 ring-white/15 hover:brightness-110 transition">
                         <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
                         <!-- Book icon -->
@@ -42,7 +42,7 @@ class NavbarComponent extends HTMLElement {
                     <!-- Create -->
                     <a href="CreateGame.html"
                         class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl
-                                text-white font-semibold bg-gradient-to-r from-red-800 to-red-500
+                                text-white font-semibold bg-berry-lipstick
                                 shadow ring-1 ring-white/15 hover:brightness-110 transition">
                         <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
                         <!-- Pencil icon -->
@@ -56,7 +56,7 @@ class NavbarComponent extends HTMLElement {
                     <!-- Join -->
                     <a href="joinGame.html"
                         class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl
-                                text-white font-semibold bg-gradient-to-r from-purple-800 to-purple-500
+                                text-white font-semibold bg-royal-plum
                                 shadow ring-1 ring-white/15 hover:brightness-110 transition">
                         <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
                         <!-- Grid icon -->

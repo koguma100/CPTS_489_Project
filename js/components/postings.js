@@ -140,10 +140,10 @@ function renderQuizDetails() {
           </div>
         </div>
         <div class = "flex justify-center gap-6">
-            <a href="#" class="bg-red-500 hover:bg-red-600 text-white font-extrabold px-6 py-3 rounded-xl shadow-md transition">
+            <a href="#" class="bg-berry-lipstick hover:bg-berry-lipstick-dim text-white font-extrabold px-6 py-3 rounded-xl shadow-md transition">
             Use Template
             </a>
-            <a href="#" class="bg-red-500 hover:bg-red-600 text-white font-extrabold px-6 py-3 rounded-xl shadow-md transition">
+            <a href="#" class="bg-berry-lipstick hover:bg-berry-lipstick-dim text-white font-extrabold px-6 py-3 rounded-xl shadow-md transition">
             Create Game
             </a>
         </div>
