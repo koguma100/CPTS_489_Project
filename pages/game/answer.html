@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Answer</title>
+  <link rel="stylesheet" href="./../../public/output.css" />
+</head>
+<body class="bg-midnight-violet min-h-screen font-mono flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-royal-plum border-b border-berry-lipstick px-6 py-4 flex items-center justify-between">
+    <span class="text-white/50 text-sm">Question <span id="question-number" class="text-white font-bold">1</span></span>
+    <span id="timer" class="text-blaze-orange font-bold text-lg">20</span>
+  </header>
+
+  <!-- Question -->
+  <div class="px-6 py-8 text-center">
+    <p id="question-text" class="text-white text-xl font-bold">What is the capital of France?</p>
+  </div>
+
+  <!-- Answer Buttons -->
+  <div id="answer-grid" class="grid gap-4 px-6 pb-10 flex-1 content-end">
+    <!-- Rendered by JS -->
+  </div>
+
+  <script>
+    // ── Config ────────────────────────────────────────────────────────────────
+
+    // Change this to "truefalse" or "multichoice"
+    const questionType = "multichoice";
+
+    const multichoiceAnswers = [
+      { label: "Paris",    color: "bg-blaze-orange"   },
+      { label: "Berlin",   color: "bg-berry-lipstick" },
+      { label: "Madrid",   color: "bg-jungle-green"   },
+      { label: "Rome",     color: "bg-royal-plum"     },
+    ];
+
+    const trueFalseAnswers = [
+      { label: "True",  color: "bg-jungle-green"   },
+      { label: "False", color: "bg-berry-lipstick" },
+    ];
+
+    // ── Render Answers ────────────────────────────────────────────────────────
+
+    function renderAnswers() {
+      const grid = document.getElementById("answer-grid");
+      const answers = questionType === "truefalse" ? trueFalseAnswers : multichoiceAnswers;
+
+      grid.className = [
+        "grid gap-4 px-6 pb-10 flex-1 content-end",
+        questionType === "truefalse" ? "grid-cols-2" : "grid-cols-2"
+      ].join(" ");
+
+      grid.innerHTML = "";
+
+      answers.forEach((answer, i) => {
+        const btn = document.createElement("button");
+        btn.className = `${answer.color} text-white font-bold text-lg rounded px-4 py-8 w-full hover:opacity-90 active:scale-95 transition-transform`;
+        btn.textContent = answer.label;
+        btn.addEventListener("click", () => selectAnswer(btn, i));
+        grid.appendChild(btn);
+      });
+    }
+
+    // ── Select Answer ─────────────────────────────────────────────────────────
+
+    function selectAnswer(btn, index) {
+      // Disable all buttons after selection
+      const allBtns = document.querySelectorAll("#answer-grid button");
+      allBtns.forEach(b => {
+        b.disabled = true;
+        b.classList.add("opacity-40");
+      });
+
+      // Highlight selected
+      btn.classList.remove("opacity-40");
+      btn.classList.add("ring-4", "ring-white");
+    }
+
+    // ── Timer ─────────────────────────────────────────────────────────────────
+
+    let timeLeft = 20;
+    const timerEl = document.getElementById("timer");
+
+    const countdown = setInterval(() => {
+      timeLeft--;
+      timerEl.textContent = timeLeft;
+      if (timeLeft <= 5) timerEl.classList.add("text-berry-lipstick");
+      if (timeLeft <= 0) {
+        clearInterval(countdown);
+        timerEl.textContent = "0";
+        // Disable all buttons when time runs out
+        document.querySelectorAll("#answer-grid button").forEach(b => {
+          b.disabled = true;
+          b.classList.add("opacity-40");
+        });
+      }
+    }, 1000);
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    renderAnswers();
+  </script>
+
+</body>
+</html>
