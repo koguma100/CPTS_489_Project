@@ -10,8 +10,6 @@
     
 </head>
 
-
-
 <body>
     <!-- This is a component for the navbar-->
     <Navbar-component></Navbar-component>
@@ -28,7 +26,7 @@
                 </div>
 
                 <!-- Form -->
-                <form class="space-y-6" action="#" method="POST" enctype="multipart/form-data">
+                <form id= "createGameForm" class="space-y-6" enctype="multipart/form-data">
 
                     <!-- Title -->
                     <div>
@@ -137,6 +135,22 @@
             </div>
         </section>
     </main>
+<script>
+    document.getElementById("createGameForm").addEventListener("submit", function(e) {
+        e.preventDefault();
 
+        const quizSetup = {
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            tfQuestions: Number(document.getElementById("tfQuestions").value),
+            mcQuestions: Number(document.getElementById("mcQuestions").value),
+            lobbySize: Number(document.getElementById("lobbySize").value)
+        };
+
+        sessionStorage.setItem("quizSetup", JSON.stringify(quizSetup));
+
+        window.location.href = "buildQuestions.html";
+    });
+</script>
 </body>
 </html>
