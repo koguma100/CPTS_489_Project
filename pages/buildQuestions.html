@@ -140,7 +140,12 @@
         document.getElementById("questionsForm").addEventListener("submit", function(e) {
             e.preventDefault();
 
-            alert("Questions saved successfully!");
+            sessionStorage.setItem("quizSetup", null);
+            if (!quizSetup){
+                alert("No Questions to save!");
+            }
+            else
+                alert("Questions saved successfully!");
 
             window.location.href = "index.html";
         });
