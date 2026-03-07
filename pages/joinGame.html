@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Project</title>
+    
+    <!-- Link to the Tailwind CSS output file -->
+    <link href="./../public/output.css" rel="stylesheet">
+    
+</head>
+
+
+
+<body class="bg-gray-100 min-h-screen">
+    <!-- This is a component for the navbar-->
+    <Navbar-component></Navbar-component>
+    <script src="../js/components/navbar.js"></script>
+    
+<main class="flex items-center justify-center px-6 py-16">
+
+    <div class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-extrabold text-gray-800">Join a Game</h1>
+            <p class="text-gray-500 mt-2">Enter the lobby code to start playing</p>
+        </div>
+
+        <form id="joinGameForm" class="space-y-5">
+
+            <!-- Lobby Code -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-2">
+                    Lobby Code
+                </label>
+
+                <input
+                    id="lobbyCode"
+                    type="text"
+                    placeholder="Enter lobby code"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                    required
+                >
+            </div>
+
+            <!-- Player Name -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-2">
+                    Your Name
+                </label>
+
+                <input
+                    id="playerName"
+                    type="text"
+                    placeholder="Enter your name"
+                    class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none"
+                >
+            </div>
+
+            <!-- Join Button -->
+            <button
+                type="submit"
+                class="w-full bg-royal-plum hover:bg-royal-plum-dim text-white font-extrabold py-3 rounded-xl shadow-md transition"
+            >
+                Join Game
+            </button>
+
+        </form>
+
+    </div>
+
+</main>
+<script>
+    document.getElementById("joinGameForm").addEventListener("submit", function(e){
+
+        e.preventDefault();
+
+        const lobbyCode = document.getElementById("lobbyCode").value;
+        const playerName = document.getElementById("playerName").value;
+
+        // redirect to game lobby page but for now hompage
+        // window.location.href = "Lobby.html";
+        window.location.href = "index.html";
+
+    });
+
+</script>
+
+</body>
+</html>
