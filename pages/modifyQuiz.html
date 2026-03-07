@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Modify Quiz</title>
+  <link href="./../public/output.css" rel="stylesheet" />
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+  <!-- Navbar -->
+  <Navbar-component></Navbar-component>
+  <script src="../js/components/navbar.js"></script>
+
+  <main class="px-6 py-10">
+    <section class="max-w-4xl mx-auto">
+      <div class="bg-white rounded-3xl shadow-2xl p-8">
+
+        <!-- Heading -->
+        <div class="mb-8 text-center">
+          <h1 class="text-3xl font-extrabold text-gray-800">Modify Quiz</h1>
+          <p class="text-gray-500 mt-2">Edit, add, or remove questions from your quiz</p>
+        </div>
+
+        <!-- Top Action Buttons -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+          <button
+            id="add-question-btn"
+            type="button"
+            class="flex-1 bg-jungle-green hover:brightness-110 text-white font-extrabold py-3 rounded-xl shadow-md transition"
+          >
+            Add Question
+          </button>
+
+          <button
+            id="delete-quiz-btn"
+            type="button"
+            class="flex-1 bg-berry-lipstick hover:bg-berry-lipstick-dim text-white font-extrabold py-3 rounded-xl shadow-md transition"
+          >
+            Delete Whole Quiz
+          </button>
+        </div>
+
+        <!-- Question List -->
+        <div id="question-list" class="space-y-6">
+          <!-- Questions rendered by JS -->
+        </div>
+
+        <!-- Save -->
+        <div class="pt-8">
+          <button
+            id="save-quiz-btn"
+            type="button"
+            class="w-full bg-berry-lipstick hover:bg-berry-lipstick-dim text-white font-extrabold py-3 rounded-xl shadow-md transition"
+          >
+            Save Changes
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Ignore the js, used AI to generate this just to get a basic example of the layout
+        The actual thing will utilize our backend/database stuff that is not implemented yet-->
+  <script>
+    let questions = [
+      {
+        text: "What is the capital of France?",
+        answers: ["Paris", "Berlin", "Madrid", "Rome"],
+        correct: 0
+      },
+      {
+        text: "Which planet is known as the Red Planet?",
+        answers: ["Venus", "Mars", "Jupiter", "Mercury"],
+        correct: 1
+      },
+      {
+        text: "What does HTML stand for?",
+        answers: [
+          "HyperText Markup Language",
+          "HighText Machine Language",
+          "HyperTool Multi Language",
+          "Home Tool Markup Language"
+        ],
+        correct: 0
+      }
+    ];
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function renderQuestions() {
+      const questionList = document.getElementById("question-list");
+      questionList.innerHTML = "";
+
+      questions.forEach((question, index) => {
+        const questionCard = document.createElement("div");
+        questionCard.className = "border border-gray-200 rounded-2xl p-6 bg-gray-50";
+
+        questionCard.innerHTML = `
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+            <div>
+              <h2 class="text-xl font-extrabold text-gray-800">Question ${index + 1}</h2>
+              <p class="text-sm text-gray-500 mt-1">Modify the question, answers, and correct option</p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                class="modify-btn bg-jungle-green hover:brightness-110 text-white font-bold px-4 py-2 rounded-xl shadow-md transition"
+                data-index="${index}"
+              >
+                Modify
+              </button>
+
+              <button
+                type="button"
+                class="delete-btn bg-berry-lipstick hover:bg-berry-lipstick-dim text-white font-bold px-4 py-2 rounded-xl shadow-md transition"
+                data-index="${index}"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-5">
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-2">
+                Question Text
+              </label>
+              <input
+                type="text"
+                class="question-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                value="${escapeHtml(question.text)}"
+                data-index="${index}"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-bold text-gray-700 mb-3">
+                Answers
+              </label>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                ${question.answers.map((answer, answerIndex) => `
+                  <div class="border rounded-xl px-4 py-3 shadow-sm transition ${
+                    question.correct === answerIndex
+                      ? "border-jungle-green bg-green-50"
+                      : "border-gray-200 bg-white"
+                  }">
+                    <div class="flex items-start gap-3">
+                      <input
+                        type="radio"
+                        name="correct-${index}"
+                        class="correct-radio mt-1 w-5 h-5 accent-jungle-green"
+                        ${question.correct === answerIndex ? "checked" : ""}
+                        data-question-index="${index}"
+                        data-answer-index="${answerIndex}"
+                      />
+
+                      <div class="flex-1">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">
+                          Answer ${String.fromCharCode(65 + answerIndex)}
+                          ${question.correct === answerIndex
+                            ? '<span class="ml-2 text-xs font-extrabold text-jungle-green uppercase tracking-wide">Correct</span>'
+                            : ""
+                          }
+                        </label>
+
+                        <input
+                          type="text"
+                          class="answer-input w-full px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 bg-white"
+                          value="${escapeHtml(answer)}"
+                          data-question-index="${index}"
+                          data-answer-index="${answerIndex}"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+
+        questionList.appendChild(questionCard);
+      });
+
+      attachEventListeners();
+    }
+
+    function attachEventListeners() {
+      document.querySelectorAll(".question-input").forEach((input) => {
+        input.addEventListener("input", (e) => {
+          const index = Number(e.target.dataset.index);
+          questions[index].text = e.target.value;
+        });
+      });
+
+      document.querySelectorAll(".answer-input").forEach((input) => {
+        input.addEventListener("input", (e) => {
+          const questionIndex = Number(e.target.dataset.questionIndex);
+          const answerIndex = Number(e.target.dataset.answerIndex);
+          questions[questionIndex].answers[answerIndex] = e.target.value;
+        });
+      });
+
+      document.querySelectorAll(".correct-radio").forEach((radio) => {
+        radio.addEventListener("change", (e) => {
+          const questionIndex = Number(e.target.dataset.questionIndex);
+          const answerIndex = Number(e.target.dataset.answerIndex);
+          questions[questionIndex].correct = answerIndex;
+          renderQuestions();
+        });
+      });
+
+      document.querySelectorAll(".delete-btn").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const index = Number(e.target.dataset.index);
+          const confirmed = confirm(`Are you sure you want to delete Question ${index + 1}?`);
+
+          if (confirmed) {
+            questions.splice(index, 1);
+            renderQuestions();
+          }
+        });
+      });
+
+      document.querySelectorAll(".modify-btn").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const index = Number(e.target.dataset.index);
+          const questionCard = e.target.closest(".border");
+          if (questionCard) {
+            questionCard.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+          alert(`You can now edit Question ${index + 1}.`);
+        });
+      });
+    }
+
+    document.getElementById("add-question-btn").addEventListener("click", () => {
+      questions.push({
+        text: "New question",
+        answers: ["Option A", "Option B", "Option C", "Option D"],
+        correct: 0
+      });
+
+      renderQuestions();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    });
+
+    document.getElementById("delete-quiz-btn").addEventListener("click", () => {
+      const confirmed = confirm("Are you sure you want to delete this entire quiz?");
+      if (confirmed) {
+        window.location.href = "dashboard.html";
+      }
+    });
+
+    document.getElementById("save-quiz-btn").addEventListener("click", () => {
+      alert("Quiz changes saved!");
+      console.log("Saved quiz data:", questions);
+    });
+
+    renderQuestions();
+  </script>
+</body>
+</html>

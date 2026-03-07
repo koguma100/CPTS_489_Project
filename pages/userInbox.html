@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./../public/output.css" rel="stylesheet">
+  <title>Inbox</title>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Navbar -->
+  <logged-in-navbar></logged-in-navbar>
+  <script src="../js/components/loggedInNavbar.js"></script>
+
+  <main class="max-w-6xl mx-auto py-8 px-6">
+
+    <h1 class="text-3xl font-bold mb-6">Messages</h1>
+
+    <div class="grid grid-cols-3 bg-white rounded-2xl shadow-lg overflow-hidden">
+
+      <!-- Message list placeholder, just to show where the list of messages will be -->
+      <div class="border-r">
+        
+        <div class="p-4 border-b font-semibold">
+          Inbox
+        </div>
+
+        <div class="divide-y">
+
+          <!-- Message Item -->
+          <div class="p-4 hover:bg-gray-100 cursor-pointer bg-gray-50">
+            <div class="font-semibold">Game Moderator</div>
+            <div class="text-sm text-gray-600 truncate">
+              Your quiz has been approved!
+            </div>
+          </div>
+
+          <div class="p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="font-semibold">Player42</div>
+            <div class="text-sm text-gray-600 truncate">
+              Want to join a new game?
+            </div>
+          </div>
+
+          <div class="p-4 hover:bg-gray-100 cursor-pointer">
+            <div class="font-semibold">System</div>
+            <div class="text-sm text-gray-600 truncate">
+              Weekly leaderboard updated.
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Message Content -->
+      <div class="col-span-2 p-6">
+
+        <h2 class="text-xl font-semibold mb-2">
+          Game Moderator
+        </h2>
+
+        <p class="text-gray-500 text-sm mb-6">
+          Sent 2 hours ago
+        </p>
+
+        <div class="text-gray-700 leading-relaxed">
+          Congratulations! Your quiz submission has been reviewed and approved.
+          Players can now discover and play your quiz in the quiz library.
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</body>
+</html>
