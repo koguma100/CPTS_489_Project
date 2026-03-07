@@ -11,7 +11,7 @@
   <!-- Header -->
   <header class="bg-royal-plum border-b border-berry-lipstick px-6 py-4 flex items-center justify-between">
     <span class="text-white/70 text-sm">Question <span id="question-number" class="text-white font-bold">1</span></span>
-    <span id="timer" class="text-white font-bold text-4xl">20</span>
+    <span id="timer" class="text-white font-bold text-4xl">5</span>
   </header>
 
   <!-- Question -->
@@ -33,7 +33,7 @@
     // ── Config ────────────────────────────────────────────────────────────────
 
     // Change this to "truefalse" or "multichoice"
-    const questionType = "truefalse";
+    const questionType = "multichoice";
 
     const multichoiceAnswers = [
       { label: "Paris",    color: "bg-blaze-orange"   },
@@ -84,7 +84,7 @@
 
     // ── Timer ─────────────────────────────────────────────────────────────────
 
-    let timeLeft = 20;
+    let timeLeft = 5;
     const timerEl = document.getElementById("timer");
 
     const countdown = setInterval(() => {
@@ -94,9 +94,12 @@
       if (timeLeft <= 0) {
         clearInterval(countdown);
         timerEl.textContent = "0";
-        document.querySelectorAll("#answer-grid button").forEach(b => {
-          b.disabled = true;
-          b.classList.add("opacity-40");
+        document.querySelectorAll("#answer-grid button").forEach((b, i) => {
+          if (i != 0) {
+            b.disabled = true;
+            b.classList.add("opacity-40");
+          }
+          
         });
       }
     }, 1000);
