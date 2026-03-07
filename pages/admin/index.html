@@ -51,7 +51,7 @@
     <div class="px-6 py-3 flex items-center justify-between">
 
       <div class="flex items-center gap-8">
-        <a href="index.html" class="flex items-center gap-2">
+        <a href="/pages/admin/index.html" class="flex items-center gap-2">
           <span class="display text-white text-2xl tracking-widest">Let It Ride</span>
           <span class="text-xs font-bold uppercase tracking-widest bg-blaze-orange text-white px-2 py-0.5 rounded-md">Admin</span>
         </a>
@@ -68,20 +68,10 @@
             Overview
           </a>
 
-          <!-- Analytics -->
-          <a href="#analytics" onclick="showSection('analytics')" id="nav-analytics"
-            class="nav-link flex items-center justify-center gap-2 w-32 py-2 text-sm rounded-xl
-                    text-white font-semibold bg-jungle-green shadow ring-1 ring-white/15 hover:brightness-110 transition">
-            <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
-              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-            </span>
-            Analytics
-          </a>
-
           <!-- Manage Users -->
           <a href="#users" onclick="showSection('users')" id="nav-users"
             class="nav-link flex items-center justify-center gap-2 w-36 py-2 text-sm rounded-xl
-                    text-white font-semibold bg-berry-lipstick shadow ring-1 ring-white/15 hover:brightness-110 transition">
+                    text-white font-semibold bg-jungle-green shadow ring-1 ring-white/15 hover:brightness-110 transition">
             <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
             </span>
@@ -98,15 +88,25 @@
             Games
           </a>
 
+          <!-- Analytics -->
+          <a href="/pages/" id="nav-user-view"
+            class="nav-link flex items-center justify-center gap-2 w-32 py-2 text-sm rounded-xl
+                    text-white font-semibold bg-berry-lipstick shadow ring-1 ring-white/15 hover:brightness-110 transition">
+            <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </span>
+            User View
+          </a>
+
         </nav>
       </div>
 
-      <div class="text-white flex hover:text-gray-300 transition cursor-pointer" onclick="window.location.href='./index.html'">
+      <div class="text-white flex hover:text-gray-300 transition cursor-pointer" onclick="window.location.href='/pages/index.html'">
         user view
       </div>
 
       <div class="flex items-center gap-3">
-        <div class="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2" onclick="window.location.href='./account.html'">
+        <div class="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2" onclick="window.location.href='/pages/admin/account.html'">
           <span class="w-2 h-2 rounded-full bg-jungle-green badge-online"></span>
           <span class="text-white text-sm font-semibold">New Messages: </span>
           <span class="text-white text-sm">3</span>
@@ -447,7 +447,7 @@
           </td>
           <td class="px-6 py-4">
             <div class="flex gap-2">
-              <button class="text-xs px-3 py-1.5 rounded-lg bg-royal-plum/10 text-royal-plum font-semibold hover:bg-royal-plum/20 transition" onclick="window.location.href='./admin/viewUser.html?id=${u.id}'">View</button>
+              <button class="text-xs px-3 py-1.5 rounded-lg bg-royal-plum/10 text-royal-plum font-semibold hover:bg-royal-plum/20 transition" onclick="window.location.href='/pages/admin/viewUser.html?id=${u.id}'">View</button>
               ${u.status !== 'banned'
                 ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-berry-lipstick/10 text-berry-lipstick font-semibold hover:bg-berry-lipstick/20 transition">Ban</button>`
                 : `<button class="text-xs px-3 py-1.5 rounded-lg bg-jungle-green/10 text-jungle-green font-semibold hover:bg-jungle-green/20 transition">Unban</button>`}
