@@ -5,16 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Player Screen</title>
     <link rel="stylesheet" href="./../../public/output.css">
+    <style>
+        .wager-btn {
+            transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
+            aspect-ratio: 1 / 1;
+        }
+        .wager-btn:active {
+            transform: scale(0.95);
+        }
+        .wager-btn.selected {
+            transform: scale(1.06);
+            filter: brightness(1.25);
+            box-shadow: 0 0 0 3px white;
+        }
+    </style>
 </head>
 <body class="bg-midnight-violet min-h-dvh font-mono flex flex-col overflow-hidden">
 
     <!-- Loading Screen (shown by default between questions) -->
     <div id="loading-screen" class="fixed inset-0 z-40 bg-midnight-violet flex flex-col items-center justify-between p-10">
-        <h1 class="text-white">Game ID: 123456</h1>
 
-        <p class="text-white/50 text-7xl tracking-[0.3em] uppercase animate-pulse text-center">
-            Waiting for next question...
-        </p>
+        <div class="text-center">
+            <h1 class="text-white">Game ID: 123456</h1>
+            <p class="text-white text-4xl animate-pulse">Total Points: 100</p>
+        </div>
+
+        <!-- Wager Section -->
+        <div class="flex flex-col items-center gap-4 w-full max-w-xs">
+            <p class="text-white/60 text-xs tracking-widest uppercase">Place Your Wager</p>
+            <div class="grid grid-cols-2 gap-3 w-full">
+                <button id="wager-default" onclick="selectWager(this, 2)"
+                    class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
+                    <span class="text-2xl font-bold">2</span>
+                    <span class="text-xs opacity-70 tracking-widest uppercase">pts</span>
+                </button>
+                <button onclick="selectWager(this, '10%')"
+                    class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
+                    <span class="text-2xl font-bold">10%</span>
+                    <span class="text-xs opacity-70 tracking-widest uppercase">of pts</span>
+                </button>
+                <button onclick="selectWager(this, '25%')"
+                    class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
+                    <span class="text-2xl font-bold">25%</span>
+                    <span class="text-xs opacity-70 tracking-widest uppercase">of pts</span>
+                </button>
+                <button onclick="selectWager(this, '50%')"
+                    class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
+                    <span class="text-2xl font-bold">50%</span>
+                    <span class="text-xs opacity-70 tracking-widest uppercase">of pts</span>
+                </button>
+            </div>
+            <p id="wager-label" class="text-white/30 text-xs tracking-widest uppercase h-4"></p>
+        </div>
 
         <button onclick="startQuestion()" class="text-white/20 text-xs tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full hover:text-white/50 transition-colors">
             ▶ Start Question (dev)
@@ -83,9 +125,25 @@
 
     <script>
         const params = new URLSearchParams(window.location.search);
-        document.getElementById('username-display').textContent = params.get('name') || 'Player1';
+        // document.getElementById('username-display').textContent = params.get('name') || 'Player1';
 
         let answered = false;
+        let selectedWager = null;
+
+        // Auto-select the first wager button on load
+        window.addEventListener('DOMContentLoaded', () => {
+            selectWager(document.getElementById('wager-default'), 2);
+        });
+
+        function selectWager(btn, value) {
+            // Deselect all
+            document.querySelectorAll('.wager-btn').forEach(b => b.classList.remove('selected'));
+            // Select this one
+            btn.classList.add('selected');
+            selectedWager = value;
+            const label = document.getElementById('wager-label');
+            label.textContent = `Wagering ${value}${typeof value === 'number' ? ' pts' : ' of your points'}`;
+        }
 
         // Call from your host/game logic to show answer buttons
         function startQuestion() {
@@ -102,6 +160,9 @@
         // Call from your host/game logic to return to loading screen
         function endQuestion() {
             document.getElementById('loading-screen').classList.remove('hidden');
+            // Reset wager selection to default
+            document.querySelectorAll('.wager-btn').forEach(b => b.classList.remove('selected'));
+            selectWager(document.getElementById('wager-default'), 2);
         }
 
         function setMode(mode) {
