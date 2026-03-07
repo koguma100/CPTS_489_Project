@@ -1,11 +1,493 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Let It Ride</title>
+  <link rel="stylesheet" href="./../../public/output.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'DM Mono', monospace; }
+    .display { font-family: 'Bebas Neue', sans-serif; }
+
+    /* Stat card hover lift */
+    .stat-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
+    .stat-card:hover { transform: translateY(-3px); }
+
+    /* Subtle chart bar animation */
+    .bar { transform-origin: bottom; animation: growUp 0.6s cubic-bezier(0.34,1.56,0.64,1) both; }
+    .bar:nth-child(1) { animation-delay: 0.05s; }
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.15s; }
+    .bar:nth-child(4) { animation-delay: 0.2s; }
+    .bar:nth-child(5) { animation-delay: 0.25s; }
+    .bar:nth-child(6) { animation-delay: 0.3s; }
+    .bar:nth-child(7) { animation-delay: 0.35s; }
+    @keyframes growUp { from { transform: scaleY(0); opacity: 0; } to { transform: scaleY(1); opacity: 1; } }
+
+    /* Fade in sections */
+    .fade-in { animation: fadeIn 0.5s ease both; }
+    .fade-in:nth-child(1) { animation-delay: 0.0s; }
+    .fade-in:nth-child(2) { animation-delay: 0.08s; }
+    .fade-in:nth-child(3) { animation-delay: 0.16s; }
+    .fade-in:nth-child(4) { animation-delay: 0.24s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Tab underline */
+    .tab-active { border-bottom: 3px solid #F75C03; color: #F75C03; }
+
+    /* User row hover */
+    .user-row:hover { background: rgba(130,2,99,0.08); }
+
+    /* Badge pulse */
+    .badge-online { animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+  </style>
 </head>
-<body>
-    
+<body class="bg-gray-50 min-h-screen">
+
+  <!-- ── Navbar ─────────────────────────────────────────────────────────── -->
+  <header class="bg-midnight-violet shadow-lg sticky top-0 z-50">
+    <div class="px-6 py-3 flex items-center justify-between">
+
+      <div class="flex items-center gap-8">
+        <a href="index.html" class="flex items-center gap-2">
+          <span class="display text-white text-2xl tracking-widest">Let It Ride</span>
+          <span class="text-xs font-bold uppercase tracking-widest bg-blaze-orange text-white px-2 py-0.5 rounded-md">Admin</span>
+        </a>
+
+        <nav class="hidden md:flex items-center gap-2">
+
+          <!-- Overview (active) -->
+          <a href="#overview" onclick="showSection('overview')" id="nav-overview"
+            class="nav-link flex items-center justify-center gap-2 w-32 py-2 text-sm rounded-xl
+                    text-white font-semibold bg-blaze-orange shadow ring-1 ring-white/15 hover:brightness-110 transition">
+            <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+            </span>
+            Overview
+          </a>
+
+          <!-- Analytics -->
+          <a href="#analytics" onclick="showSection('analytics')" id="nav-analytics"
+            class="nav-link flex items-center justify-center gap-2 w-32 py-2 text-sm rounded-xl
+                    text-white font-semibold bg-jungle-green shadow ring-1 ring-white/15 hover:brightness-110 transition">
+            <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
+            </span>
+            Analytics
+          </a>
+
+          <!-- Manage Users -->
+          <a href="#users" onclick="showSection('users')" id="nav-users"
+            class="nav-link flex items-center justify-center gap-2 w-36 py-2 text-sm rounded-xl
+                    text-white font-semibold bg-berry-lipstick shadow ring-1 ring-white/15 hover:brightness-110 transition">
+            <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </span>
+            Manage Users
+          </a>
+
+          <!-- Games -->
+          <a href="#games" onclick="showSection('games')" id="nav-games"
+            class="nav-link flex items-center justify-center gap-2 w-32 py-2 text-sm rounded-xl
+                    text-white font-semibold bg-royal-plum shadow ring-1 ring-white/15 hover:brightness-110 transition">
+            <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z"/></svg>
+            </span>
+            Games
+          </a>
+
+        </nav>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <div class="flex items-center gap-2 bg-white/10 rounded-xl px-3 py-2" onclick="window.location.href='./account.html'">
+          <span class="w-2 h-2 rounded-full bg-jungle-green badge-online"></span>
+          <span class="text-white text-sm font-semibold">New Messages: </span>
+          <span class="text-white text-sm">3</span>
+        </div>
+        <a href="login.html"
+          class="flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-xl
+                  text-white font-semibold bg-white/10 ring-1 ring-white/15 hover:bg-white/20 transition">
+          Sign out
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Main ───────────────────────────────────────────────────────────── -->
+  <main class="max-w-7xl mx-auto px-6 py-8">
+
+    <!-- ── OVERVIEW ──────────────────────────────────────────────────────── -->
+    <section id="section-overview">
+      <div class="mb-6">
+        <h1 class="display text-5xl text-midnight-violet tracking-wide">Dashboard</h1>
+        <p class="text-gray-600 text-sm mt-1">Welcome back. Here's what's happening today.</p>
+      </div>
+
+      <!-- Stat Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+
+        <div class="stat-card fade-in bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase tracking-widest text-gray-600">Total Users</span>
+            <span class="w-8 h-8 rounded-xl bg-blaze-orange/10 grid place-items-center">
+              <svg class="w-4 h-4 text-blaze-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+            </span>
+          </div>
+          <div class="display text-4xl text-midnight-violet">4,821</div>
+          <div class="text-xs text-jungle-green mt-1">↑ 12% this week</div>
+        </div>
+
+        <div class="stat-card fade-in bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase tracking-widest text-gray-600">Active Now</span>
+            <span class="w-8 h-8 rounded-xl bg-jungle-green/10 grid place-items-center">
+              <svg class="w-4 h-4 text-jungle-green" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+            </span>
+          </div>
+          <div class="display text-4xl text-midnight-violet">247</div>
+          <div class="flex items-center gap-1 text-xs text-jungle-green mt-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-jungle-green badge-online"></span>
+            Live sessions
+          </div>
+        </div>
+
+        <div class="stat-card fade-in bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase tracking-widest text-gray-600">Games Today</span>
+            <span class="w-8 h-8 rounded-xl bg-berry-lipstick/10 grid place-items-center">
+              <svg class="w-4 h-4 text-berry-lipstick" viewBox="0 0 24 24" fill="currentColor"><path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z"/></svg>
+            </span>
+          </div>
+          <div class="display text-4xl text-midnight-violet">1,093</div>
+          <div class="text-xs text-berry-lipstick mt-1">↑ 8% vs yesterday</div>
+        </div>
+
+        <div class="stat-card fade-in bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs uppercase tracking-widest text-gray-600">Avg. Session</span>
+            <span class="w-8 h-8 rounded-xl bg-royal-plum/10 grid place-items-center">
+              <svg class="w-4 h-4 text-royal-plum" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+            </span>
+          </div>
+          <div class="display text-4xl text-midnight-violet">14m</div>
+          <div class="text-xs text-gray-600 mt-1">Per game session</div>
+        </div>
+
+      </div>
+
+      <!-- Recent Activity + Top Games -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Recent Activity -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="display text-2xl text-midnight-violet mb-4 tracking-wide">Recent Activity</h2>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 py-2 border-b border-gray-50">
+              <span class="w-2 h-2 rounded-full bg-jungle-green flex-shrink-0"></span>
+              <span class="text-sm text-gray-600 flex-1">New user <span class="font-bold text-midnight-violet">@jake_r</span> registered</span>
+              <span class="text-xs text-gray-600">2m ago</span>
+            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-gray-50">
+              <span class="w-2 h-2 rounded-full bg-blaze-orange flex-shrink-0"></span>
+              <span class="text-sm text-gray-600 flex-1">Game <span class="font-bold text-midnight-violet">#4821</span> completed — 32 players</span>
+              <span class="text-xs text-gray-600">5m ago</span>
+            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-gray-50">
+              <span class="w-2 h-2 rounded-full bg-berry-lipstick flex-shrink-0"></span>
+              <span class="text-sm text-gray-600 flex-1">User <span class="font-bold text-midnight-violet">@mia_t</span> flagged for review</span>
+              <span class="text-xs text-gray-600">18m ago</span>
+            </div>
+            <div class="flex items-center gap-3 py-2 border-b border-gray-50">
+              <span class="w-2 h-2 rounded-full bg-jungle-green flex-shrink-0"></span>
+              <span class="text-sm text-gray-600 flex-1">New user <span class="font-bold text-midnight-violet">@leon_k</span> registered</span>
+              <span class="text-xs text-gray-600">31m ago</span>
+            </div>
+            <div class="flex items-center gap-3 py-2">
+              <span class="w-2 h-2 rounded-full bg-royal-plum flex-shrink-0"></span>
+              <span class="text-sm text-gray-600 flex-1">Quiz <span class="font-bold text-midnight-violet">"World Capitals"</span> created</span>
+              <span class="text-xs text-gray-600">44m ago</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Weekly bar chart -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="display text-2xl text-midnight-violet mb-1 tracking-wide">Games This Week</h2>
+          <p class="text-xs text-gray-600 mb-6">Daily games played</p>
+          <div class="flex items-end justify-between gap-2 h-36">
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <div class="bar w-full bg-royal-plum/30 rounded-t-md" style="height:55%"></div>
+              <span class="text-xs text-gray-600">Mon</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <div class="bar w-full bg-royal-plum/50 rounded-t-md" style="height:70%"></div>
+              <span class="text-xs text-gray-600">Tue</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <div class="bar w-full bg-berry-lipstick/60 rounded-t-md" style="height:60%"></div>
+              <span class="text-xs text-gray-600">Wed</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <div class="bar w-full bg-blaze-orange/70 rounded-t-md" style="height:85%"></div>
+              <span class="text-xs text-gray-600">Thu</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <div class="bar w-full bg-blaze-orange rounded-t-md" style="height:100%"></div>
+              <span class="text-xs text-gray-600">Fri</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <div class="bar w-full bg-jungle-green/70 rounded-t-md" style="height:90%"></div>
+              <span class="text-xs text-gray-600">Sat</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <div class="bar w-full bg-jungle-green/40 rounded-t-md" style="height:45%"></div>
+              <span class="text-xs text-gray-600">Sun</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── ANALYTICS ──────────────────────────────────────────────────────── -->
+    <section id="section-analytics" class="hidden">
+      <div class="mb-6">
+        <h1 class="display text-5xl text-midnight-violet tracking-wide">Analytics</h1>
+        <p class="text-gray-600 text-sm mt-1">Platform usage and engagement metrics.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:col-span-2">
+          <h2 class="display text-2xl text-midnight-violet mb-1 tracking-wide">Monthly Active Users</h2>
+          <p class="text-xs text-gray-600 mb-6">Last 6 months</p>
+          <div class="flex items-end justify-between gap-3 h-40">
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <span class="text-xs text-gray-600 font-bold">2.1k</span>
+              <div class="bar w-full bg-royal-plum rounded-t-md" style="height:42%"></div>
+              <span class="text-xs text-gray-600">Oct</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <span class="text-xs text-gray-600 font-bold">2.8k</span>
+              <div class="bar w-full bg-royal-plum rounded-t-md" style="height:56%"></div>
+              <span class="text-xs text-gray-600">Nov</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <span class="text-xs text-gray-600 font-bold">3.2k</span>
+              <div class="bar w-full bg-berry-lipstick rounded-t-md" style="height:64%"></div>
+              <span class="text-xs text-gray-600">Dec</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <span class="text-xs text-gray-600 font-bold">3.9k</span>
+              <div class="bar w-full bg-berry-lipstick rounded-t-md" style="height:78%"></div>
+              <span class="text-xs text-gray-600">Jan</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <span class="text-xs text-gray-600 font-bold">4.4k</span>
+              <div class="bar w-full bg-blaze-orange rounded-t-md" style="height:88%"></div>
+              <span class="text-xs text-gray-600">Feb</span>
+            </div>
+            <div class="flex flex-col items-center gap-1 flex-1">
+              <span class="text-xs text-gray-600 font-bold">4.8k</span>
+              <div class="bar w-full bg-jungle-green rounded-t-md" style="height:100%"></div>
+              <span class="text-xs text-gray-600">Mar</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── MANAGE USERS ───────────────────────────────────────────────────── -->
+    <section id="section-users" class="hidden">
+      <div class="mb-6">
+        <h1 class="display text-5xl text-midnight-violet tracking-wide">Manage Users</h1>
+        <p class="text-gray-600 text-sm mt-1">Search, view, and moderate user accounts.</p>
+      </div>
+
+      <!-- Search bar -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-6 flex gap-3 items-center">
+        <svg class="w-5 h-5 text-gray-600 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        <input id="user-search" type="text" placeholder="Search by username, email, or ID..."
+          oninput="filterUsers()"
+          class="flex-1 bg-transparent text-sm text-midnight-violet placeholder-gray-400 outline-none font-mono" />
+        <div class="flex gap-2">
+          <button onclick="filterByStatus('all')" id="filter-all"
+            class="text-xs px-3 py-1.5 rounded-lg bg-midnight-violet text-white font-semibold transition">All</button>
+          <button onclick="filterByStatus('active')" id="filter-active"
+            class="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition">Active</button>
+          <button onclick="filterByStatus('flagged')" id="filter-flagged"
+            class="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition">Flagged</button>
+          <button onclick="filterByStatus('banned')" id="filter-banned"
+            class="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition">Banned</button>
+        </div>
+      </div>
+
+      <!-- User Table -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-100 bg-gray-50">
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">User</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Email</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Joined</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Games</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Status</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="user-table-body"></tbody>
+        </table>
+        <div id="no-results" class="hidden text-center py-12 text-gray-600 text-sm">No users found.</div>
+      </div>
+
+    </section>
+
+    <!-- ── GAMES ──────────────────────────────────────────────────────────── -->
+    <section id="section-games" class="hidden">
+      <div class="mb-6">
+        <h1 class="display text-5xl text-midnight-violet tracking-wide">Games</h1>
+        <p class="text-gray-600 text-sm mt-1">All active and recent game sessions.</p>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-gray-100 bg-gray-50">
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Game ID</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Quiz</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Host</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Players</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Status</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="user-row border-b border-gray-50 transition-colors">
+              <td class="px-6 py-4 font-bold text-midnight-violet">#4821</td>
+              <td class="px-6 py-4 text-gray-600">World Capitals</td>
+              <td class="px-6 py-4 text-gray-600">@jake_r</td>
+              <td class="px-6 py-4 text-gray-600">32</td>
+              <td class="px-6 py-4"><span class="bg-jungle-green/10 text-jungle-green text-xs font-bold px-2 py-1 rounded-lg">Live</span></td>
+              <td class="px-6 py-4 text-gray-600 text-xs">Started 8m ago</td>
+            </tr>
+            <tr class="user-row border-b border-gray-50 transition-colors">
+              <td class="px-6 py-4 font-bold text-midnight-violet">#4820</td>
+              <td class="px-6 py-4 text-gray-600">Movie Trivia</td>
+              <td class="px-6 py-4 text-gray-600">@sara_p</td>
+              <td class="px-6 py-4 text-gray-600">18</td>
+              <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-lg">Ended</span></td>
+              <td class="px-6 py-4 text-gray-600 text-xs">22m ago</td>
+            </tr>
+            <tr class="user-row border-b border-gray-50 transition-colors">
+              <td class="px-6 py-4 font-bold text-midnight-violet">#4819</td>
+              <td class="px-6 py-4 text-gray-600">Science Bowl</td>
+              <td class="px-6 py-4 text-gray-600">@leon_k</td>
+              <td class="px-6 py-4 text-gray-600">41</td>
+              <td class="px-6 py-4"><span class="bg-jungle-green/10 text-jungle-green text-xs font-bold px-2 py-1 rounded-lg">Live</span></td>
+              <td class="px-6 py-4 text-gray-600 text-xs">Started 14m ago</td>
+            </tr>
+            <tr class="user-row transition-colors">
+              <td class="px-6 py-4 font-bold text-midnight-violet">#4818</td>
+              <td class="px-6 py-4 text-gray-600">History 101</td>
+              <td class="px-6 py-4 text-gray-600">@mia_t</td>
+              <td class="px-6 py-4 text-gray-600">9</td>
+              <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-lg">Ended</span></td>
+              <td class="px-6 py-4 text-gray-600 text-xs">51m ago</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // ── Mock user data ────────────────────────────────────────────────────
+    const users = [
+      { id: "001", username: "@jake_r",   email: "jake@example.com",   joined: "Jan 12, 2025", games: 142, status: "active"  },
+      { id: "002", username: "@sara_p",   email: "sara@example.com",   joined: "Feb 3, 2025",  games: 87,  status: "active"  },
+      { id: "003", username: "@mia_t",    email: "mia@example.com",    joined: "Nov 20, 2024", games: 31,  status: "flagged" },
+      { id: "004", username: "@leon_k",   email: "leon@example.com",   joined: "Mar 1, 2025",  games: 204, status: "active"  },
+      { id: "005", username: "@chris_w",  email: "chris@example.com",  joined: "Dec 5, 2024",  games: 0,   status: "banned"  },
+      { id: "006", username: "@ava_m",    email: "ava@example.com",    joined: "Feb 28, 2025", games: 55,  status: "active"  },
+      { id: "007", username: "@noah_x",   email: "noah@example.com",   joined: "Jan 30, 2025", games: 12,  status: "flagged" },
+    ];
+
+    let activeFilter = 'all';
+
+    const statusBadge = {
+      active:  'bg-jungle-green/10 text-jungle-green',
+      flagged: 'bg-blaze-orange/10 text-blaze-orange',
+      banned:  'bg-berry-lipstick/10 text-berry-lipstick',
+    };
+
+    function renderUsers(list) {
+      const tbody = document.getElementById('user-table-body');
+      const noResults = document.getElementById('no-results');
+      if (!list.length) { tbody.innerHTML = ''; noResults.classList.remove('hidden'); return; }
+      noResults.classList.add('hidden');
+      tbody.innerHTML = list.map(u => `
+        <tr class="user-row border-b border-gray-50 transition-colors">
+          <td class="px-6 py-4">
+            <div class="font-bold text-midnight-violet">${u.username}</div>
+            <div class="text-xs text-gray-600">#${u.id}</div>
+          </td>
+          <td class="px-6 py-4 text-gray-600">${u.email}</td>
+          <td class="px-6 py-4 text-gray-600 text-xs">${u.joined}</td>
+          <td class="px-6 py-4 text-gray-600">${u.games}</td>
+          <td class="px-6 py-4">
+            <span class="${statusBadge[u.status]} text-xs font-bold px-2 py-1 rounded-lg capitalize">${u.status}</span>
+          </td>
+          <td class="px-6 py-4">
+            <div class="flex gap-2">
+              <button class="text-xs px-3 py-1.5 rounded-lg bg-royal-plum/10 text-royal-plum font-semibold hover:bg-royal-plum/20 transition">View</button>
+              ${u.status !== 'banned'
+                ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-berry-lipstick/10 text-berry-lipstick font-semibold hover:bg-berry-lipstick/20 transition">Ban</button>`
+                : `<button class="text-xs px-3 py-1.5 rounded-lg bg-jungle-green/10 text-jungle-green font-semibold hover:bg-jungle-green/20 transition">Unban</button>`}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function filterUsers() {
+      const q = document.getElementById('user-search').value.toLowerCase();
+      let list = users.filter(u =>
+        u.username.toLowerCase().includes(q) ||
+        u.email.toLowerCase().includes(q) ||
+        u.id.includes(q)
+      );
+      if (activeFilter !== 'all') list = list.filter(u => u.status === activeFilter);
+      renderUsers(list);
+    }
+
+    function filterByStatus(status) {
+      activeFilter = status;
+      ['all','active','flagged','banned'].forEach(s => {
+        const btn = document.getElementById(`filter-${s}`);
+        btn.className = s === status
+          ? 'text-xs px-3 py-1.5 rounded-lg bg-midnight-violet text-white font-semibold transition'
+          : 'text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition';
+      });
+      filterUsers();
+    }
+
+    // ── Section navigation ────────────────────────────────────────────────
+    const sections = ['overview', 'analytics', 'users', 'games'];
+
+    function showSection(name) {
+      sections.forEach(s => {
+        document.getElementById(`section-${s}`).classList.toggle('hidden', s !== name);
+      });
+      if (name === 'users') renderUsers(users);
+    }
+
+    // Init
+    showSection('overview');
+  </script>
+
 </body>
 </html>
