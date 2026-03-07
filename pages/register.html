@@ -23,7 +23,7 @@
             </div>
 
             <!-- Register Form -->
-            <form class="space-y-5">
+            <form id="registersForm" class="space-y-5">
 
                 <!-- Email -->
                 <div>
@@ -83,7 +83,13 @@
 
         </div>
         <script>
-            
+            document.getElementById("registersForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                alert("Account Created Successfully!");
+
+                window.location.href = "index.html";
+            });
         </script>
 
     </main>
