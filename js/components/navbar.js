@@ -40,7 +40,7 @@ class NavbarComponent extends HTMLElement {
                     </a>
 
                     <!-- Create -->
-                    <a href="creategame.html"
+                    <a href="register.html"
                         class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl
                                 text-white font-semibold bg-berry-lipstick
                                 shadow ring-1 ring-white/15 hover:brightness-110 transition">
