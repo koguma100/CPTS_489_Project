@@ -26,7 +26,7 @@
                 </div>
 
                 <!-- Form -->
-                <form id= "createGameForm" class="space-y-6" enctype="multipart/form-data">
+                <form id= "createGameFormDemo" class="space-y-6" enctype="multipart/form-data">
 
                     <!-- Title -->
                     <div>
@@ -135,7 +135,15 @@
             </div>
         </section>
     </main>
+
 <script>
+    // Added JUST for the demo delete afterward and change the 'gameformdemo' back to gameform
+    document.getElementById("createGameFormDemo").addEventListener("submit", function(e) {
+    e.preventDefault(); // stop real form submission
+    window.location.href = "buildQuestions.html"; // redirect page
+    });
+
+    // Real code starts here
     document.getElementById("createGameForm").addEventListener("submit", function(e) {
         e.preventDefault();
 

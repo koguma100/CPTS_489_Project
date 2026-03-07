@@ -11,7 +11,7 @@ class LoggedInNavbarComponent extends HTMLElement {
                 </a>
 
                 <nav class="hidden md:flex items-center gap-2">
-                    <a href="userDashboard.html"
+                    <a href="index.html"
                         class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl
                                 text-white font-semibold bg-jungle-green
                                 shadow ring-1 ring-white/15 hover:brightness-110 transition">
@@ -62,7 +62,7 @@ class LoggedInNavbarComponent extends HTMLElement {
             </div>
 
             <div class="flex items-center gap-4">
-                <a href="profile.html" 
+                <a href="userAccount.html" 
                 class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl
                         text-white font-semibold bg-gradient-to-r from-blue-700 to-blue-500
                         shadow ring-1 ring-white/15 hover:brightness-110 transition">

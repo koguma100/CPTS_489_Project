@@ -21,7 +21,7 @@
             </div>
 
             <!-- Form -->
-            <form class="space-y-5">
+            <form id="loginForm" class="space-y-5">
 
                 <!-- Email OR user -->
                 <div>
@@ -88,5 +88,12 @@
 
     </main>
 
+    <!-- Added for demo purposes only, redirects to user dashboard for demo-->
+    <script>
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        window.location.href = "userDashboard.html";
+    });
+    </script>
 </body>
 </html>
