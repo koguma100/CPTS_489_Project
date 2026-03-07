@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="./../public/output.css" rel="stylesheet" />
+  <title>Quiz Dashboard</title>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Logged-in Navbar -->
+  <logged-in-navbar></logged-in-navbar>
+  <script src="../js/components/loggedInNavbar.js"></script>
+
+  <main class="py-8 space-y-8">
+
+    <!-- Your Quizzes -->
+    <section class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">Your Quizzes</h2>
+        <div class="flex gap-3">
+          <button id="prevBtn1" class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90">
+            Previous
+          </button>
+          <button id="nextBtn1" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:opacity-90">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <div id="quizTrack1" class="flex gap-4 overflow-hidden"></div>
+    </section>
+
+    <!-- Past Quizzes -->
+    <section class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">Past Quizzes</h2>
+        <div class="flex gap-3">
+          <button id="prevBtn2" class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90">
+            Previous
+          </button>
+          <button id="nextBtn2" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:opacity-90">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <div id="quizTrack2" class="flex gap-4 overflow-hidden"></div>
+    </section>
+
+    <!-- Recommended Quizzes -->
+    <section class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold">Recommended Quizzes</h2>
+        <div class="flex gap-3">
+          <button id="prevBtn3" class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90">
+            Previous
+          </button>
+          <button id="nextBtn3" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:opacity-90">
+            Next
+          </button>
+        </div>
+      </div>
+
+      <div id="quizTrack3" class="flex gap-4 overflow-hidden"></div>
+    </section>
+
+  </main>
+
+  <script>
+
+    const quizzes = [
+      {
+        title: "Math Quiz",
+        image: "https://via.placeholder.com/220x140?text=Math",
+        description: "Practice algebra and geometry.",
+        link: "mathQuiz.html"
+      },
+      {
+        title: "Science Quiz",
+        image: "https://via.placeholder.com/220x140?text=Science",
+        description: "Test biology and chemistry basics.",
+        link: "scienceQuiz.html"
+      },
+      {
+        title: "History Quiz",
+        image: "https://via.placeholder.com/220x140?text=History",
+        description: "Explore major world events.",
+        link: "historyQuiz.html"
+      },
+      {
+        title: "Sports Quiz",
+        image: "https://via.placeholder.com/220x140?text=Sports",
+        description: "Challenge your sports knowledge.",
+        link: "sportsQuiz.html"
+      },
+      {
+        title: "Coding Quiz",
+        image: "https://via.placeholder.com/220x140?text=Coding",
+        description: "HTML, CSS, JavaScript, and more.",
+        link: "codingQuiz.html"
+      }
+    ];
+
+    function setupCarousel(trackId, prevBtnId, nextBtnId, quizData) {
+
+      const quizTrack = document.getElementById(trackId);
+      const prevBtn = document.getElementById(prevBtnId);
+      const nextBtn = document.getElementById(nextBtnId);
+
+      let startIndex = 0;
+      const visibleCount = 3;
+
+      function renderQuizzes() {
+
+        quizTrack.innerHTML = "";
+
+        const visibleQuizzes = [];
+
+        for (let i = 0; i < visibleCount; i++) {
+          const index = (startIndex + i) % quizData.length;
+          visibleQuizzes.push(quizData[index]);
+        }
+
+        visibleQuizzes.forEach((quiz) => {
+
+          const card = document.createElement("div");
+
+          card.className =
+            "flex-1 min-w-0 bg-gray-50 rounded-xl shadow p-4 hover:shadow-lg transition";
+
+          card.innerHTML = `
+            <a href="${quiz.link}">
+              <img src="${quiz.image}" 
+                   alt="${quiz.title}" 
+                   class="w-full h-36 object-cover rounded-lg mb-3 hover:brightness-110 transition cursor-pointer">
+            </a>
+
+            <h3 class="text-lg font-semibold mb-2">${quiz.title}</h3>
+
+            <p class="text-sm text-gray-600">${quiz.description}</p>
+          `;
+
+          quizTrack.appendChild(card);
+        });
+      }
+
+      prevBtn.addEventListener("click", () => {
+        startIndex = (startIndex - 1 + quizData.length) % quizData.length;
+        renderQuizzes();
+      });
+
+      nextBtn.addEventListener("click", () => {
+        startIndex = (startIndex + 1) % quizData.length;
+        renderQuizzes();
+      });
+
+      renderQuizzes();
+    }
+
+    setupCarousel("quizTrack1", "prevBtn1", "nextBtn1", quizzes);
+    setupCarousel("quizTrack2", "prevBtn2", "nextBtn2", quizzes);
+    setupCarousel("quizTrack3", "prevBtn3", "nextBtn3", quizzes);
+
+  </script>
+
+</body>
+</html>

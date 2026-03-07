@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="./../public/output.css" rel="stylesheet">
+  <title>Account Settings</title>
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+  <!-- Logged-in Navbar -->
+  <logged-in-navbar></logged-in-navbar>
+  <script src="../js/components/loggedInNavbar.js"></script>
+
+  <main class="max-w-4xl mx-auto py-10 px-6 space-y-8">
+
+    <!-- Page Title -->
+    <div>
+      <h1 class="text-3xl font-bold">Account Settings</h1>
+      <p class="text-gray-600">Manage your account information</p>
+    </div>
+
+    <!-- Profile Info Card -->
+    <section class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-semibold mb-6">Profile Information</h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Username</label>
+          <input type="text" value="Player123"
+          class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-jungle-green">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input type="email" value="player@email.com"
+          class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-jungle-green">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">First Name</label>
+          <input type="text"
+          class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-jungle-green">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-1">Last Name</label>
+          <input type="text"
+          class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-jungle-green">
+        </div>
+
+      </div>
+
+      <div class="mt-6">
+        <button class="bg-jungle-green text-white px-6 py-2 rounded-lg hover:brightness-110">
+          Save Changes
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
