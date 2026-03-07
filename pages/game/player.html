@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Player Screen</title>
+    <link rel="stylesheet" href="./../../public/output.css">
+</head>
+<body class="bg-midnight-violet min-h-dvh font-mono flex flex-col overflow-hidden">
+
+    <!-- Loading Screen (shown by default between questions) -->
+    <div id="loading-screen" class="fixed inset-0 z-40 bg-midnight-violet flex flex-col items-center justify-between p-10">
+        <h1 class="text-white">Game ID: 123456</h1>
+
+        <p class="text-white/50 text-7xl tracking-[0.3em] uppercase animate-pulse text-center">
+            Waiting for next question...
+        </p>
+
+        <button onclick="startQuestion()" class="text-white/20 text-xs tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full hover:text-white/50 transition-colors">
+            ▶ Start Question (dev)
+        </button>
+    </div>
+
+    <!-- Answer Area -->
+    <main class="flex-1 flex flex-col gap-3 p-3">
+
+        <!-- Mode Toggle -->
+        <div class="flex justify-center gap-2">
+            <button onclick="setMode('multi')" id="btn-multi"
+                class="text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-white/40 bg-white/10 text-white cursor-pointer">
+                4 Options
+            </button>
+            <button onclick="setMode('tf')" id="btn-tf"
+                class="text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-white/15 bg-white/5 text-white/40 cursor-pointer">
+                True / False
+            </button>
+        </div>
+
+        <!-- 4-Option Grid -->
+        <div id="grid-multi" class="grid grid-cols-2 grid-rows-2 gap-3 flex-1">
+            <button onclick="selectAnswer(this, 'A')"
+                class="answer-btn bg-blaze-orange rounded-2xl flex items-center justify-center shadow-lg shadow-blaze-orange/40 active:scale-95 transition-transform">
+                <span class="text-white text-7xl">▲</span>
+            </button>
+            <button onclick="selectAnswer(this, 'B')"
+                class="answer-btn bg-berry-lipstick rounded-2xl flex items-center justify-center shadow-lg shadow-berry-lipstick/40 active:scale-95 transition-transform">
+                <span class="text-white text-7xl">◆</span>
+            </button>
+            <button onclick="selectAnswer(this, 'C')"
+                class="answer-btn bg-royal-plum rounded-2xl flex items-center justify-center shadow-lg shadow-royal-plum/40 active:scale-95 transition-transform">
+                <span class="text-white text-7xl">●</span>
+            </button>
+            <button onclick="selectAnswer(this, 'D')"
+                class="answer-btn bg-jungle-green rounded-2xl flex items-center justify-center shadow-lg shadow-jungle-green/40 active:scale-95 transition-transform">
+                <span class="text-white text-7xl">★</span>
+            </button>
+        </div>
+
+        <!-- True/False Grid -->
+        <div id="grid-tf" class="hidden grid-cols-2 gap-3 flex-1">
+            <button onclick="selectAnswer(this, 'True')"
+                class="answer-btn bg-jungle-green rounded-2xl flex items-center justify-center shadow-lg shadow-jungle-green/40 active:scale-95 transition-transform">
+                <span class="text-8xl text-white">✓</span>
+            </button>
+            <button onclick="selectAnswer(this, 'False')"
+                class="answer-btn bg-berry-lipstick rounded-2xl flex items-center justify-center shadow-lg shadow-berry-lipstick/40 active:scale-95 transition-transform">
+                <span class="text-8xl text-white">✕</span>
+            </button>
+        </div>
+
+    </main>
+
+    <p class="text-center text-white/20 text-xs tracking-widest uppercase pb-3">Tap to answer</p>
+
+    <!-- Feedback Overlay -->
+    <div id="feedback" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="absolute inset-0 bg-midnight-violet/85 backdrop-blur-sm"></div>
+        <div class="relative z-10 text-center">
+            <span class="text-7xl block mb-3">📨</span>
+            <p id="feedback-text" class="text-white text-3xl font-bold tracking-widest uppercase"></p>
+        </div>
+    </div>
+
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        document.getElementById('username-display').textContent = params.get('name') || 'Player1';
+
+        let answered = false;
+
+        // Call from your host/game logic to show answer buttons
+        function startQuestion() {
+            document.getElementById('loading-screen').classList.add('hidden');
+            answered = false;
+            document.querySelectorAll('.answer-btn').forEach(b => {
+                b.style.opacity = '';
+                b.style.transform = '';
+                b.style.filter = '';
+                b.disabled = false;
+            });
+        }
+
+        // Call from your host/game logic to return to loading screen
+        function endQuestion() {
+            document.getElementById('loading-screen').classList.remove('hidden');
+        }
+
+        function setMode(mode) {
+            answered = false;
+            const isMulti = mode === 'multi';
+
+            document.getElementById('grid-multi').classList.toggle('hidden', !isMulti);
+            document.getElementById('grid-multi').classList.toggle('grid', isMulti);
+            document.getElementById('grid-tf').classList.toggle('hidden', isMulti);
+            document.getElementById('grid-tf').classList.toggle('grid', !isMulti);
+
+            const activeClass = 'text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border cursor-pointer border-white/40 bg-white/10 text-white';
+            const inactiveClass = 'text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border cursor-pointer border-white/15 bg-white/5 text-white/40';
+
+            document.getElementById('btn-multi').className = isMulti ? activeClass : inactiveClass;
+            document.getElementById('btn-tf').className    = !isMulti ? activeClass : inactiveClass;
+
+            document.querySelectorAll('.answer-btn').forEach(b => {
+                b.style.opacity = '';
+                b.style.transform = '';
+                b.disabled = false;
+            });
+        }
+
+        function selectAnswer(btn, choice) {
+            if (answered) return;
+            answered = true;
+
+            document.querySelectorAll('.answer-btn').forEach(b => {
+                if (b !== btn) b.style.opacity = '0.3';
+                b.disabled = true;
+            });
+
+            btn.style.transform = 'scale(1.05)';
+            btn.style.filter = 'brightness(1.2)';
+
+            setTimeout(() => {
+                const fb = document.getElementById('feedback');
+                document.getElementById('feedback-text').textContent = `"${choice}" Sent!`;
+                fb.classList.remove('opacity-0', 'pointer-events-none');
+                fb.classList.add('opacity-100');
+                setTimeout(() => {
+                    fb.classList.add('opacity-0', 'pointer-events-none');
+                    fb.classList.remove('opacity-100');
+                }, 1800);
+            }, 250);
+        }
+    </script>
+</body>
+</html>
