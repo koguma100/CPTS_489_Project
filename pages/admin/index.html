@@ -443,7 +443,7 @@
           </td>
           <td class="px-6 py-4">
             <div class="flex gap-2">
-              <button class="text-xs px-3 py-1.5 rounded-lg bg-royal-plum/10 text-royal-plum font-semibold hover:bg-royal-plum/20 transition">View</button>
+              <button class="text-xs px-3 py-1.5 rounded-lg bg-royal-plum/10 text-royal-plum font-semibold hover:bg-royal-plum/20 transition" onclick="window.location.href='./admin/viewUser.html?id=${u.id}'">View</button>
               ${u.status !== 'banned'
                 ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-berry-lipstick/10 text-berry-lipstick font-semibold hover:bg-berry-lipstick/20 transition">Ban</button>`
                 : `<button class="text-xs px-3 py-1.5 rounded-lg bg-jungle-green/10 text-jungle-green font-semibold hover:bg-jungle-green/20 transition">Unban</button>`}
