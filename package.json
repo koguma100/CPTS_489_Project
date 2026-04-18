@@ -21,5 +21,9 @@
   "homepage": "https://github.com/koguma100/CPTS_489_Project#readme",
   "devDependencies": {
     "tailwindcss": "^3.4.19"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.10.2",
+    "@supabase/supabase-js": "^2.103.3"
   }
 }

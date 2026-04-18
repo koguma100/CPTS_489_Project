@@ -139,7 +139,7 @@
               <svg class="w-4 h-4 text-blaze-orange" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
             </span>
           </div>
-          <div class="display text-4xl text-midnight-violet">4,821</div>
+          <div class="display text-4xl text-midnight-violet" id="stat-total-users">—</div>
           <div class="text-xs text-jungle-green mt-1">↑ 12% this week</div>
         </div>
 
@@ -336,6 +336,7 @@
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">User</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Email</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Joined</th>
+              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Last Active</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Games</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Status</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Actions</th>
@@ -407,89 +408,9 @@
 
   </main>
 
-  <script>
-    // ── Mock user data ────────────────────────────────────────────────────
-    const users = [
-      { id: "001", username: "@jake_r",   email: "jake@example.com",   joined: "Jan 12, 2025", games: 142, status: "active"  },
-      { id: "002", username: "@sara_p",   email: "sara@example.com",   joined: "Feb 3, 2025",  games: 87,  status: "active"  },
-      { id: "003", username: "@mia_t",    email: "mia@example.com",    joined: "Nov 20, 2024", games: 31,  status: "flagged" },
-      { id: "004", username: "@leon_k",   email: "leon@example.com",   joined: "Mar 1, 2025",  games: 204, status: "active"  },
-      { id: "005", username: "@chris_w",  email: "chris@example.com",  joined: "Dec 5, 2024",  games: 0,   status: "banned"  },
-      { id: "006", username: "@ava_m",    email: "ava@example.com",    joined: "Feb 28, 2025", games: 55,  status: "active"  },
-      { id: "007", username: "@noah_x",   email: "noah@example.com",   joined: "Jan 30, 2025", games: 12,  status: "flagged" },
-    ];
-
-    let activeFilter = 'all';
-
-    const statusBadge = {
-      active:  'bg-jungle-green/10 text-jungle-green',
-      flagged: 'bg-blaze-orange/10 text-blaze-orange',
-      banned:  'bg-berry-lipstick/10 text-berry-lipstick',
-    };
-
-    function renderUsers(list) {
-      const tbody = document.getElementById('user-table-body');
-      const noResults = document.getElementById('no-results');
-      if (!list.length) { tbody.innerHTML = ''; noResults.classList.remove('hidden'); return; }
-      noResults.classList.add('hidden');
-      tbody.innerHTML = list.map(u => `
-        <tr class="user-row border-b border-gray-50 transition-colors">
-          <td class="px-6 py-4">
-            <div class="font-bold text-midnight-violet">${u.username}</div>
-            <div class="text-xs text-gray-600">#${u.id}</div>
-          </td>
-          <td class="px-6 py-4 text-gray-600">${u.email}</td>
-          <td class="px-6 py-4 text-gray-600 text-xs">${u.joined}</td>
-          <td class="px-6 py-4 text-gray-600">${u.games}</td>
-          <td class="px-6 py-4">
-            <span class="${statusBadge[u.status]} text-xs font-bold px-2 py-1 rounded-lg capitalize">${u.status}</span>
-          </td>
-          <td class="px-6 py-4">
-            <div class="flex gap-2">
-              <button class="text-xs px-3 py-1.5 rounded-lg bg-royal-plum/10 text-royal-plum font-semibold hover:bg-royal-plum/20 transition" onclick="window.location.href='viewUser.html?id=${u.id}'">View</button>
-              ${u.status !== 'banned'
-                ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-berry-lipstick/10 text-berry-lipstick font-semibold hover:bg-berry-lipstick/20 transition">Ban</button>`
-                : `<button class="text-xs px-3 py-1.5 rounded-lg bg-jungle-green/10 text-jungle-green font-semibold hover:bg-jungle-green/20 transition">Unban</button>`}
-            </div>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    function filterUsers() {
-      const q = document.getElementById('user-search').value.toLowerCase();
-      let list = users.filter(u =>
-        u.username.toLowerCase().includes(q) ||
-        u.email.toLowerCase().includes(q) ||
-        u.id.includes(q)
-      );
-      if (activeFilter !== 'all') list = list.filter(u => u.status === activeFilter);
-      renderUsers(list);
-    }
-
-    function filterByStatus(status) {
-      activeFilter = status;
-      ['all','active','flagged','banned'].forEach(s => {
-        const btn = document.getElementById(`filter-${s}`);
-        btn.className = s === status
-          ? 'text-xs px-3 py-1.5 rounded-lg bg-midnight-violet text-white font-semibold transition'
-          : 'text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition';
-      });
-      filterUsers();
-    }
-
-    // ── Section navigation ────────────────────────────────────────────────
-    const sections = ['overview', 'analytics', 'users', 'games'];
-
-    function showSection(name) {
-      sections.forEach(s => {
-        document.getElementById(`section-${s}`).classList.toggle('hidden', s !== name);
-      });
-      if (name === 'users') renderUsers(users);
-    }
-
-    // Init
-    showSection('overview');
+  <script type="module">
+    import { initAdminDashboard } from '../../../js/controllers/userController.js';
+    await initAdminDashboard();
   </script>
 
 </body>
