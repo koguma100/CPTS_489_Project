@@ -56,6 +56,13 @@ export async function deleteUser(id) {
   if (error) throw new Error(error.message);
 }
 
+export async function sendPasswordReset(email) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/views/pages/resetPassword.html`,
+  });
+  if (error) throw new Error(error.message);
+}
+
 export async function getCurrentUser() {
   const { data: { user } } = await supabase.auth.getUser();
   return user;

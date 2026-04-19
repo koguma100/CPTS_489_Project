@@ -1,4 +1,4 @@
-import { fetchUserById, banUser, unbanUser, deleteUser, getCurrentUser } from '../models/userModel.js';
+import { fetchUserById, banUser, unbanUser, deleteUser, sendPasswordReset, getCurrentUser } from '../models/userModel.js';
 
 let user = null;
 let adminId = null;
@@ -114,6 +114,7 @@ window.executeAction = async () => {
       updateBanButton(false);
       showToast(`${display} has been unbanned`);
     } else if (action === 'reset') {
+      await sendPasswordReset(user.email);
       showToast(`Reset link sent to ${user.email}`);
     } else if (action === 'delete') {
       await deleteUser(user.id);
