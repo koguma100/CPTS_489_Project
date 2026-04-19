@@ -96,25 +96,26 @@ window.closeModal = () => {
 };
 
 window.executeAction = async () => {
+  const action = pendingAction;
   const display = user.username ? `@${user.username}` : 'User';
   window.closeModal();
 
   try {
-    if (pendingAction === 'ban') {
+    if (action === 'ban') {
       await banUser(user.id, adminId);
       user.status = 'banned';
       updateStatusBadge('banned');
       updateBanButton(true);
       showToast(`${display} has been banned`);
-    } else if (pendingAction === 'unban') {
+    } else if (action === 'unban') {
       await unbanUser(user.id);
       user.status = 'active';
       updateStatusBadge('active');
       updateBanButton(false);
       showToast(`${display} has been unbanned`);
-    } else if (pendingAction === 'reset') {
+    } else if (action === 'reset') {
       showToast(`Reset link sent to ${user.email}`);
-    } else if (pendingAction === 'delete') {
+    } else if (action === 'delete') {
       await deleteUser(user.id);
       showToast('Account deleted');
       setTimeout(() => { window.location.href = 'index.html'; }, 1500);
