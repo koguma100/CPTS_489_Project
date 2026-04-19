@@ -1,5 +1,5 @@
-import { fetchAllUsers, banUser, unbanUser, getCurrentUser } from '../models/userModel.js';
-import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection } from '../views/adminDashboardView.js';
+import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../models/userModel.js';
+import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity } from '../views/adminDashboardView.js';
 
 let allUsers = [];
 let activeFilter = 'all';
@@ -23,7 +23,11 @@ function formatRelative(iso) {
 
 export async function initAdminDashboard() {
   try {
-    const [data, adminUser] = await Promise.all([fetchAllUsers(), getCurrentUser()]);
+    const [data, recentData, adminUser] = await Promise.all([
+      fetchAllUsers(),
+      fetchRecentUsers(3),
+      getCurrentUser(),
+    ]);
     currentAdminId = adminUser?.id ?? null;
 
     allUsers = data.map(u => ({
@@ -37,7 +41,13 @@ export async function initAdminDashboard() {
       status: u.status ?? 'active',
     }));
 
+    const recentUsers = recentData.map(u => ({
+      username: u.username ? `@${u.username}` : '—',
+      time: formatRelative(u.created_at),
+    }));
+
     renderTotalUsers(allUsers.length);
+    renderRecentActivity(recentUsers);
   } catch (err) {
     console.error('Failed to load users:', err.message);
   }

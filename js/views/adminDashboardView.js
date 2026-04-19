@@ -62,3 +62,30 @@ export function renderSection(name) {
     document.getElementById(`section-${s}`).classList.toggle('hidden', s !== name);
   });
 }
+
+export function renderRecentActivity(recentUsers) {
+  const container = document.getElementById('recent-activity');
+  if (!container) return;
+
+  const mockItems = [
+    { color: 'bg-blaze-orange', text: 'Game <span class="font-bold text-midnight-violet">#4821</span> completed — 32 players', time: '5m ago' },
+    { color: 'bg-berry-lipstick', text: 'User <span class="font-bold text-midnight-violet">@mia_t</span> flagged for review', time: '18m ago' },
+    { color: 'bg-royal-plum', text: 'Quiz <span class="font-bold text-midnight-violet">"World Capitals"</span> created', time: '44m ago' },
+  ];
+
+  const userItems = recentUsers.map(u => ({
+    color: 'bg-jungle-green',
+    text: `New user <span class="font-bold text-midnight-violet">${u.username}</span> registered`,
+    time: u.time,
+  }));
+
+  const allItems = [...userItems, ...mockItems];
+
+  container.innerHTML = allItems.map((item, i) => `
+    <div class="flex items-center gap-3 py-2 ${i < allItems.length - 1 ? 'border-b border-gray-50' : ''}">
+      <span class="w-2 h-2 rounded-full ${item.color} flex-shrink-0"></span>
+      <span class="text-sm text-gray-600 flex-1">${item.text}</span>
+      <span class="text-xs text-gray-600">${item.time}</span>
+    </div>
+  `).join('');
+}

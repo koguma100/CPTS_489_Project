@@ -10,6 +10,17 @@ export async function fetchAllUsers() {
   return data;
 }
 
+export async function fetchRecentUsers(limit = 3) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function banUser(id, adminId) {
   const { error } = await supabase
     .from('users')
