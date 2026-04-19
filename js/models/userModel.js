@@ -58,7 +58,7 @@ export async function deleteUser(id) {
 
 export async function sendPasswordReset(email) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/views/pages/resetPassword.html`,
+    redirectTo: `${window.location.origin}/pages/resetPassword.html`,
   });
   if (error) throw new Error(error.message);
 }
