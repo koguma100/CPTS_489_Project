@@ -1,5 +1,6 @@
 import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../models/userModel.js';
-import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity } from '../views/adminDashboardView.js';
+import { fetchGamesThisWeek } from '../models/gameModel.js';
+import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart } from '../views/adminDashboardView.js';
 
 let allUsers = [];
 let activeFilter = 'all';
@@ -22,15 +23,17 @@ function formatRelative(iso) {
 }
 
 export async function initAdminDashboard() {
-  try {
-    const [data, recentData, adminUser] = await Promise.all([
-      fetchAllUsers(),
-      fetchRecentUsers(3),
-      getCurrentUser(),
-    ]);
-    currentAdminId = adminUser?.id ?? null;
+  // Fetch users and games independently so one failure doesn't block the other
+  const [usersResult, recentResult, gamesResult, adminUser] = await Promise.allSettled([
+    fetchAllUsers(),
+    fetchRecentUsers(3),
+    fetchGamesThisWeek(),
+    getCurrentUser(),
+  ]);
 
-    allUsers = data.map(u => ({
+  if (usersResult.status === 'fulfilled') {
+    currentAdminId = adminUser.value?.id ?? null;
+    allUsers = usersResult.value.map(u => ({
       id: u.id,
       username: u.username ? `@${u.username}` : '—',
       email: u.email ?? '—',
@@ -40,17 +43,29 @@ export async function initAdminDashboard() {
       games: u.games_played ?? 0,
       status: u.status ?? 'active',
     }));
+    renderTotalUsers(allUsers.length);
+  } else {
+    console.error('Failed to load users:', usersResult.reason?.message);
+  }
 
-    const recentUsers = recentData.map(u => ({
+  if (recentResult.status === 'fulfilled') {
+    const recentUsers = recentResult.value.map(u => ({
       username: u.username ? `@${u.username}` : '—',
       time: formatRelative(u.created_at),
     }));
-
-    renderTotalUsers(allUsers.length);
     renderRecentActivity(recentUsers);
-  } catch (err) {
-    console.error('Failed to load users:', err.message);
   }
+
+  const dayCounts = [0, 0, 0, 0, 0, 0, 0];
+  if (gamesResult.status === 'fulfilled') {
+    gamesResult.value.forEach(g => {
+      const day = (new Date(g.created_at).getDay() + 6) % 7;
+      dayCounts[day]++;
+    });
+  } else {
+    console.error('Failed to load games:', gamesResult.reason?.message);
+  }
+  renderGamesChart(dayCounts);
 
   showSection('overview');
 }

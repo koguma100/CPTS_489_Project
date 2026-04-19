@@ -63,6 +63,42 @@ export function renderSection(name) {
   });
 }
 
+export function renderGamesChart(dayCounts) {
+  const container = document.getElementById('games-chart');
+  if (!container) return;
+
+  const total = dayCounts.reduce((a, b) => a + b, 0);
+  if (total === 0) {
+    container.innerHTML = `
+      <div class="w-full flex items-center justify-center text-gray-400 text-sm">
+        No games played this week yet.
+      </div>`;
+    return;
+  }
+
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const colors = [
+    'bg-royal-plum/30', 'bg-royal-plum/50', 'bg-berry-lipstick/60',
+    'bg-blaze-orange/70', 'bg-blaze-orange', 'bg-jungle-green/70', 'bg-jungle-green/40'
+  ];
+  const max = Math.max(...dayCounts);
+  const MAX_BAR_PX = 100;
+
+  container.innerHTML = `
+    <div class="flex items-end justify-between gap-2 w-full pt-6">
+      ${days.map((day, i) => {
+        const px = max > 0 ? Math.round((dayCounts[i] / max) * MAX_BAR_PX) : 4;
+        return `
+          <div class="flex flex-col items-center gap-1 flex-1">
+            <span class="text-xs text-gray-400 h-4">${dayCounts[i]}</span>
+            <div class="bar w-full ${colors[i]} rounded-t-md" style="height:${px || 4}px"></div>
+            <span class="text-xs text-gray-600 mt-1">${day}</span>
+          </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
 export function renderRecentActivity(recentUsers) {
   const container = document.getElementById('recent-activity');
   if (!container) return;
