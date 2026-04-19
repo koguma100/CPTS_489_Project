@@ -12,7 +12,7 @@
 
 
 
-<body class="bg-gray-100 min-h-screen">
+<body class="bg-gray-100 min-h-screen" data-page="join">
     <!-- This is a component for the navbar-->
     <Navbar-component></Navbar-component>
     <script src="./components/navbar.js"></script>
@@ -70,20 +70,61 @@
     </div>
 
 </main>
-<script>
-    document.getElementById("joinGameForm").addEventListener("submit", function(e){
+<script type="module">
+  import { GameController } from '../js/controllers/GameController.js'
+  import { GameView } from '../js/views/GameView.js'
 
-        e.preventDefault();
+  const controller = new GameController(new GameView())
 
-        const lobbyCode = document.getElementById("lobbyCode").value;
-        const playerName = document.getElementById("playerName").value;
+  document.getElementById('joinGameForm').addEventListener('submit', async function(e) {
+    e.preventDefault()
 
-        // redirect to game lobby page but for now hompage
-        // window.location.href = "Lobby.html";
-        window.location.href = "index.html";
+    const pin = document.getElementById('lobbyCode').value.trim()
+    const playerName = document.getElementById('playerName').value.trim()
 
-    });
+    if (!pin || !playerName) {
+      showError('Please enter both a lobby code and your name.')
+      return
+    }
 
+    setLoading(true)
+
+    try {
+      await controller.joinGame(pin, playerName)
+
+      // Store name so the lobby page knows who we are
+      sessionStorage.setItem('playerName', playerName)
+      sessionStorage.setItem('gamePin', pin)
+
+      // Redirect to lobby
+      window.location.href = '/pages/game/playerLobby.html'
+
+    } catch (err) {
+      showError(err.message.includes('No rows')
+        ? 'Game not found. Check the code and try again.'
+        : 'Something went wrong. Please try again.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  })
+
+  function setLoading(on) {
+    const btn = document.querySelector('[type="submit"]')
+    btn.disabled = on
+    btn.textContent = on ? 'Joining…' : 'Join Game'
+  }
+
+  function showError(message) {
+    let el = document.getElementById('error-msg')
+    if (!el) {
+      el = document.createElement('p')
+      el.id = 'error-msg'
+      el.className = 'text-red-500 text-sm text-center mt-2'
+      document.getElementById('joinGameForm').appendChild(el)
+    }
+    el.textContent = message
+  }
 </script>
 
 </body>
