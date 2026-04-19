@@ -36,6 +36,33 @@ export async function unbanUser(id) {
   if (error) throw new Error(error.message);
 }
 
+export async function fetchUserById(id) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('id, username, email, role, created_at, last_active, games_played, status, banned_at, banned_by, flagg_reason')
+    .eq('id', id)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function deleteUser(id) {
+  const { error } = await supabase
+    .from('users')
+    .delete()
+    .eq('id', id);
+
+  if (error) throw new Error(error.message);
+}
+
+export async function sendPasswordReset(email) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/pages/resetPassword.html`,
+  });
+  if (error) throw new Error(error.message);
+}
+
 export async function getCurrentUser() {
   const { data: { user } } = await supabase.auth.getUser();
   return user;

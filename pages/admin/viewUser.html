@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>View User — Let It Ride Admin</title>
-  <link rel="stylesheet" href="../../../public/output.css" />
+  <link rel="stylesheet" href="../../public/output.css" />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'DM Mono', monospace; }
@@ -55,7 +55,7 @@
         </div>
         <div class="text-right">
           <div class="text-xs text-gray-700">User ID</div>
-          <div class="font-bold text-midnight-violet text-sm">#003</div>
+          <div class="font-bold text-midnight-violet text-sm" id="user-id">—</div>
         </div>
       </div>
 
@@ -63,19 +63,19 @@
       <div class="grid grid-cols-2 gap-4">
         <div class="bg-gray-50 rounded-xl p-4">
           <div class="text-xs uppercase tracking-widest text-gray-700 mb-1">Joined</div>
-          <div class="font-bold text-midnight-violet text-sm">Nov 20, 2024</div>
+          <div class="font-bold text-midnight-violet text-sm" id="info-joined">—</div>
         </div>
         <div class="bg-gray-50 rounded-xl p-4">
           <div class="text-xs uppercase tracking-widest text-gray-700 mb-1">Last Active</div>
-          <div class="font-bold text-midnight-violet text-sm">Today, 11:14 AM</div>
+          <div class="font-bold text-midnight-violet text-sm" id="info-last-active">—</div>
         </div>
         <div class="bg-gray-50 rounded-xl p-4">
           <div class="text-xs uppercase tracking-widest text-gray-700 mb-1">Games Played</div>
-          <div class="font-bold text-midnight-violet text-sm">31</div>
+          <div class="font-bold text-midnight-violet text-sm" id="info-games">—</div>
         </div>
         <div class="bg-gray-50 rounded-xl p-4">
           <div class="text-xs uppercase tracking-widest text-gray-700 mb-1">Account Status</div>
-          <div class="font-bold text-blaze-orange text-sm" id="info-status">Flagged</div>
+          <div class="font-bold text-sm" id="info-status">—</div>
         </div>
       </div>
 
@@ -91,7 +91,7 @@
         <div class="flex items-center justify-between p-4 rounded-xl border border-gray-100 hover:bg-gray-50 transition">
           <div>
             <div class="font-bold text-midnight-violet text-sm">Send Password Reset</div>
-            <div class="text-xs text-gray-700 mt-0.5">Email a reset link to mia@example.com</div>
+            <div class="text-xs text-gray-700 mt-0.5" id="reset-email-desc">Email a reset link to —</div>
           </div>
           <button onclick="confirmAction('reset')"
             class="text-sm px-4 py-2 rounded-xl bg-royal-plum text-white font-semibold hover:brightness-110 transition flex-shrink-0">
@@ -152,104 +152,9 @@
     <div class="bg-midnight-violet text-white text-sm font-semibold px-5 py-3 rounded-xl shadow-lg" id="toast-text"></div>
   </div>
 
-  <script>
-    let pendingAction = null;
-    let isBanned = false;
-
-    const actions = {
-      reset: {
-        title: 'Send Reset Link',
-        body: 'A password reset email will be sent to mia@example.com.',
-        confirmLabel: 'Send',
-        confirmColor: 'bg-royal-plum',
-        toast: '✉️ Reset link sent to mia@example.com',
-      },
-      ban: {
-        title: 'Ban Account',
-        body: 'This user will be locked out of the platform immediately.',
-        confirmLabel: 'Ban',
-        confirmColor: 'bg-blaze-orange',
-        toast: '🚫 @mia_t has been banned',
-      },
-      unban: {
-        title: 'Unban Account',
-        body: 'This user will regain full access to the platform.',
-        confirmLabel: 'Unban',
-        confirmColor: 'bg-jungle-green',
-        toast: '✅ @mia_t has been unbanned',
-      },
-      delete: {
-        title: 'Delete Account',
-        body: 'This will permanently delete @mia_t and all associated data. This cannot be undone.',
-        confirmLabel: 'Delete',
-        confirmColor: 'bg-berry-lipstick',
-        toast: '🗑️ Account deleted',
-      },
-    };
-
-    function confirmAction(type) {
-      pendingAction = type;
-      const a = actions[type];
-      document.getElementById('modal-title').textContent = a.title;
-      document.getElementById('modal-body').textContent = a.body;
-      const btn = document.getElementById('modal-confirm');
-      btn.textContent = a.confirmLabel;
-      btn.className = `flex-1 py-2.5 rounded-xl text-white font-semibold text-sm hover:brightness-110 transition ${a.confirmColor}`;
-      document.getElementById('modal').classList.remove('hidden');
-    }
-
-    function closeModal() {
-      document.getElementById('modal').classList.add('hidden');
-      pendingAction = null;
-    }
-
-    function executeAction() {
-      const a = actions[pendingAction];
-      closeModal();
-      showToast(a.toast);
-
-      if (pendingAction === 'ban') {
-        isBanned = true;
-        updateBanButton();
-        updateStatusBadge('banned');
-      } else if (pendingAction === 'unban') {
-        isBanned = false;
-        updateBanButton();
-        updateStatusBadge('active');
-      }
-    }
-
-    function updateBanButton() {
-      document.getElementById('ban-title').textContent = isBanned ? 'Unban Account' : 'Ban Account';
-      document.getElementById('ban-desc').textContent  = isBanned ? 'Restore this user\'s access to the platform' : 'Prevent this user from accessing the platform';
-      const btn = document.getElementById('ban-btn');
-      btn.textContent = isBanned ? 'Unban' : 'Ban';
-      btn.className = `text-sm px-4 py-2 rounded-xl text-white font-semibold hover:brightness-110 transition flex-shrink-0 ${isBanned ? 'bg-jungle-green' : 'bg-blaze-orange'}`;
-      // Update action target
-      btn.setAttribute('onclick', isBanned ? "confirmAction('unban')" : "confirmAction('ban')");
-    }
-
-    function updateStatusBadge(status) {
-      const badge = document.getElementById('status-badge');
-      const info  = document.getElementById('info-status');
-      const map = {
-        active:  { label: 'Active',  badgeClass: 'bg-jungle-green/10 text-jungle-green',   infoClass: 'font-bold text-jungle-green text-sm' },
-        flagged: { label: 'Flagged', badgeClass: 'bg-blaze-orange/10 text-blaze-orange',   infoClass: 'font-bold text-blaze-orange text-sm' },
-        banned:  { label: 'Banned',  badgeClass: 'bg-berry-lipstick/10 text-berry-lipstick', infoClass: 'font-bold text-berry-lipstick text-sm' },
-      };
-      const s = map[status];
-      badge.textContent = s.label;
-      badge.className = `text-xs font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${s.badgeClass}`;
-      info.textContent = s.label;
-      info.className   = s.infoClass;
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-text').textContent = message;
-      toast.classList.remove('hidden');
-      setTimeout(() => toast.classList.add('hidden'), 3000);
-    }
+  <script type="module">
+    import { initViewUser } from '../../js/controllers/viewUserController.js';
+    await initViewUser();
   </script>
 
 </body>

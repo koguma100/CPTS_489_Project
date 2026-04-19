@@ -1,0 +1,1 @@
+This folder is reserved as the View layer placeholder for MVC structure.
