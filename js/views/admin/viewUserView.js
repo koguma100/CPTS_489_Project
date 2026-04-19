@@ -1,7 +1,10 @@
-import { initViewUser } from '../controllers/viewUserController.js';
+import { initViewUser, confirmAction, doCloseModal, executeAction } from '../../controllers/admin/viewUserController.js';
 
 export async function init() {
   await initViewUser();
+  window.confirmAction = confirmAction;
+  window.closeModal    = doCloseModal;
+  window.executeAction = executeAction;
 }
 
 const statusMap = {

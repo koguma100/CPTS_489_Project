@@ -1,9 +1,10 @@
-import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../models/userModel.js';
-import { fetchGamesThisWeek } from '../models/gameModel.js';
-import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart } from '../views/adminDashboardView.js';
+import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../../models/userModel.js';
+import { fetchGamesThisWeek } from '../../models/gameModel.js';
+import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart } from '../../views/admin/adminDashboardView.js';
 
 let allUsers = [];
 let activeFilter = 'all';
+let activeQuery = '';
 let currentAdminId = null;
 
 function formatDate(iso) {
@@ -22,8 +23,17 @@ function formatRelative(iso) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
+function getFilteredList() {
+  let list = allUsers.filter(u =>
+    u.username.toLowerCase().includes(activeQuery) ||
+    u.email.toLowerCase().includes(activeQuery) ||
+    u.id.toLowerCase().includes(activeQuery)
+  );
+  if (activeFilter !== 'all') list = list.filter(u => u.status === activeFilter);
+  return list;
+}
+
 export async function initAdminDashboard() {
-  // Fetch users and games independently so one failure doesn't block the other
   const [usersResult, recentResult, gamesResult, adminUser] = await Promise.allSettled([
     fetchAllUsers(),
     fetchRecentUsers(3),
@@ -70,52 +80,33 @@ export async function initAdminDashboard() {
   showSection('overview');
 }
 
-function applyFilter() {
-  const q = document.getElementById('user-search').value.toLowerCase();
-  let list = allUsers.filter(u =>
-    u.username.toLowerCase().includes(q) ||
-    u.email.toLowerCase().includes(q) ||
-    u.id.toLowerCase().includes(q)
-  );
-  if (activeFilter !== 'all') list = list.filter(u => u.status === activeFilter);
-  renderUsers(list);
+export function applyFilter(query = '') {
+  activeQuery = query;
+  renderUsers(getFilteredList());
 }
 
-function showSection(name) {
-  renderSection(name);
-  if (name === 'users') applyFilter();
-}
-
-window.goToUser = (id) => { window.location.href = `viewUser.html?id=${id}`; };
-
-window.doBanUser = async (id) => {
-  try {
-    await banUser(id, currentAdminId);
-    const u = allUsers.find(u => u.id === id);
-    if (u) u.status = 'banned';
-    applyFilter();
-  } catch (err) {
-    alert('Ban failed: ' + err.message);
-  }
-};
-
-window.doUnbanUser = async (id) => {
-  try {
-    await unbanUser(id);
-    const u = allUsers.find(u => u.id === id);
-    if (u) u.status = 'active';
-    applyFilter();
-  } catch (err) {
-    alert('Unban failed: ' + err.message);
-  }
-};
-
-window.filterUsers = () => applyFilter();
-
-window.filterByStatus = (status) => {
+export function setStatusFilter(status, query = activeQuery) {
   activeFilter = status;
+  activeQuery = query;
   renderFilterButtons(status);
-  applyFilter();
-};
+  renderUsers(getFilteredList());
+}
 
-window.showSection = (name) => showSection(name);
+export function showSection(name) {
+  renderSection(name);
+  if (name === 'users') renderUsers(getFilteredList());
+}
+
+export async function doBanUser(id) {
+  await banUser(id, currentAdminId);
+  const u = allUsers.find(u => u.id === id);
+  if (u) u.status = 'banned';
+  renderUsers(getFilteredList());
+}
+
+export async function doUnbanUser(id) {
+  await unbanUser(id);
+  const u = allUsers.find(u => u.id === id);
+  if (u) u.status = 'active';
+  renderUsers(getFilteredList());
+}

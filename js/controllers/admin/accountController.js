@@ -1,5 +1,5 @@
-import { getMessages, markMessageRead } from '../models/messageModel.js';
-import { renderMessages, renderFilterButtons, renderUnreadCount } from '../views/accountView.js';
+import { getMessages, markMessageRead } from '../../models/messageModel.js';
+import { renderMessages, renderFilterButtons, renderUnreadCount } from '../../views/admin/accountView.js';
 
 let messages = [];
 let activeFilter = 'all';

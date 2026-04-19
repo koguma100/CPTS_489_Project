@@ -67,9 +67,9 @@ export async function deleteUser(id) {
   if (error) throw new Error(error.message);
 }
 
-export async function sendPasswordReset(email) {
+export async function sendPasswordReset(email, redirectUrl) {
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${window.location.origin}/pages/resetPassword.html`,
+    redirectTo: redirectUrl,
   });
   if (error) throw new Error(error.message);
 }
@@ -77,4 +77,15 @@ export async function sendPasswordReset(email) {
 export async function getCurrentUser() {
   const { data: { user } } = await supabase.auth.getUser();
   return user;
+}
+
+export async function getUserProfile(id) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('username, role')
+    .eq('id', id)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
 }

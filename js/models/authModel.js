@@ -11,13 +11,44 @@ export async function isUsernameTaken(username) {
   return data !== null;
 }
 
-export async function signUp(email, password, username) {
+export async function fetchEmailByUsername(username) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('email')
+    .ilike('username', username)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error('No account found with that username.');
+  return data.email;
+}
+
+export async function getSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session;
+}
+
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw new Error(error.message);
+}
+
+export async function updatePassword(password) {
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) throw new Error(error.message);
+}
+
+export async function signIn(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function signUp(email, password, username, redirectUrl) {
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: {
-      emailRedirectTo: `${window.location.origin}/pages/confirmed.html`,
-    },
+    options: { emailRedirectTo: redirectUrl },
   });
   if (error) throw new Error(error.message);
 

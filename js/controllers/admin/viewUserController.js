@@ -1,5 +1,5 @@
-import { fetchUserById, banUser, unbanUser, deleteUser, sendPasswordReset, getCurrentUser } from '../models/userModel.js';
-import { renderUserProfile, renderStatusBadge, renderBanButton, renderModal, closeModal, showToast } from '../views/viewUserView.js';
+import { fetchUserById, banUser, unbanUser, deleteUser, sendPasswordReset, getCurrentUser } from '../../models/userModel.js';
+import { renderUserProfile, renderStatusBadge, renderBanButton, renderModal, closeModal, showToast } from '../../views/admin/viewUserView.js';
 
 let user = null;
 let adminId = null;
@@ -21,7 +21,7 @@ function formatRelative(iso) {
   return `${Math.floor(hrs / 24)}d ago`;
 }
 
-window.confirmAction = (type) => {
+export function confirmAction(type) {
   pendingAction = type;
   const display = user.username ? `@${user.username}` : 'this user';
   const configs = {
@@ -31,17 +31,17 @@ window.confirmAction = (type) => {
     delete: { title: 'Delete Account',  body: `This will permanently delete ${display} and all their data. This cannot be undone.`, confirmLabel: 'Delete', confirmColor: 'bg-berry-lipstick' },
   };
   renderModal(configs[type]);
-};
+}
 
-window.closeModal = () => {
+export function doCloseModal() {
   closeModal();
   pendingAction = null;
-};
+}
 
-window.executeAction = async () => {
+export async function executeAction() {
   const action = pendingAction;
   const display = user.username ? `@${user.username}` : 'User';
-  window.closeModal();
+  doCloseModal();
 
   try {
     if (action === 'ban') {
@@ -57,7 +57,8 @@ window.executeAction = async () => {
       renderBanButton(false);
       showToast(`${display} has been unbanned`);
     } else if (action === 'reset') {
-      await sendPasswordReset(user.email);
+      const redirectUrl = `${window.location.origin}/pages/resetPassword.html`;
+      await sendPasswordReset(user.email, redirectUrl);
       showToast(`Reset link sent to ${user.email}`);
     } else if (action === 'delete') {
       await deleteUser(user.id);

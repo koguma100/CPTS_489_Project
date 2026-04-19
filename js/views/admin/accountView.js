@@ -1,4 +1,4 @@
-import { initAccount, handleMarkRead, handleFilterMessages } from '../controllers/accountController.js';
+import { initAccount, handleMarkRead, handleFilterMessages } from '../../controllers/admin/accountController.js';
 
 export function init() {
   window.markRead = (id) => handleMarkRead(id);

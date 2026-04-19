@@ -1,4 +1,4 @@
-import { handleRegister } from '../controllers/authController.js';
+import { handleRegister } from '../../controllers/auth/authController.js';
 
 export function init() {
   const form    = document.getElementById('registerForm');

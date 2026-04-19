@@ -1,7 +1,24 @@
-import { initAdminDashboard } from '../controllers/userController.js';
+import { initAdminDashboard, applyFilter, setStatusFilter, showSection, doBanUser, doUnbanUser } from '../../controllers/admin/adminController.js';
 
 export async function init() {
   await initAdminDashboard();
+
+  window.showSection    = (name) => showSection(name);
+  window.filterByStatus = (status) => {
+    const q = document.getElementById('user-search')?.value.toLowerCase() ?? '';
+    setStatusFilter(status, q);
+  };
+  window.filterUsers    = () => {
+    const q = document.getElementById('user-search')?.value.toLowerCase() ?? '';
+    applyFilter(q);
+  };
+  window.goToUser       = (id) => { window.location.href = `viewUser.html?id=${id}`; };
+  window.doBanUser      = async (id) => {
+    try { await doBanUser(id); } catch (err) { alert('Ban failed: ' + err.message); }
+  };
+  window.doUnbanUser    = async (id) => {
+    try { await doUnbanUser(id); } catch (err) { alert('Unban failed: ' + err.message); }
+  };
 }
 
 const statusBadge = {
