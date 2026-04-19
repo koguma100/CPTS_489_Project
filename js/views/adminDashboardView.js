@@ -1,0 +1,64 @@
+import { initAdminDashboard } from '../controllers/userController.js';
+
+export async function init() {
+  await initAdminDashboard();
+}
+
+const statusBadge = {
+  active:  'bg-jungle-green/10 text-jungle-green',
+  flagged: 'bg-blaze-orange/10 text-blaze-orange',
+  banned:  'bg-berry-lipstick/10 text-berry-lipstick',
+};
+
+export function renderTotalUsers(count) {
+  document.getElementById('stat-total-users').textContent = count;
+}
+
+export function renderUsers(list) {
+  const tbody = document.getElementById('user-table-body');
+  const noResults = document.getElementById('no-results');
+  if (!list.length) { tbody.innerHTML = ''; noResults.classList.remove('hidden'); return; }
+  noResults.classList.add('hidden');
+
+  tbody.innerHTML = list.map(u => `
+    <tr class="user-row border-b border-gray-50 transition-colors">
+      <td class="px-6 py-4">
+        <div class="font-bold text-midnight-violet">${u.username}</div>
+        <div class="text-xs text-gray-600">${u.id.slice(0, 8)}…</div>
+      </td>
+      <td class="px-6 py-4 text-gray-600">${u.email}</td>
+      <td class="px-6 py-4 text-gray-600 text-xs">${u.joined}</td>
+      <td class="px-6 py-4 text-gray-600 text-xs">${u.lastActive}</td>
+      <td class="px-6 py-4 text-gray-600">${u.games}</td>
+      <td class="px-6 py-4">
+        <span class="${statusBadge[u.status] ?? statusBadge.active} text-xs font-bold px-2 py-1 rounded-lg capitalize">${u.status}</span>
+      </td>
+      <td class="px-6 py-4">
+        <div class="flex gap-2">
+          <button class="text-xs px-3 py-1.5 rounded-lg bg-royal-plum/10 text-royal-plum font-semibold hover:bg-royal-plum/20 transition"
+            onclick="window.goToUser('${u.id}')">View</button>
+          ${u.status !== 'banned'
+            ? `<button class="text-xs px-3 py-1.5 rounded-lg bg-berry-lipstick/10 text-berry-lipstick font-semibold hover:bg-berry-lipstick/20 transition"
+                onclick="window.doBanUser('${u.id}')">Ban</button>`
+            : `<button class="text-xs px-3 py-1.5 rounded-lg bg-jungle-green/10 text-jungle-green font-semibold hover:bg-jungle-green/20 transition"
+                onclick="window.doUnbanUser('${u.id}')">Unban</button>`}
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+export function renderFilterButtons(activeFilter) {
+  ['all', 'active', 'flagged', 'banned'].forEach(s => {
+    const btn = document.getElementById(`filter-${s}`);
+    btn.className = s === activeFilter
+      ? 'text-xs px-3 py-1.5 rounded-lg bg-midnight-violet text-white font-semibold transition'
+      : 'text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-600 font-semibold hover:bg-gray-200 transition';
+  });
+}
+
+export function renderSection(name) {
+  ['overview', 'analytics', 'users', 'games'].forEach(s => {
+    document.getElementById(`section-${s}`).classList.toggle('hidden', s !== name);
+  });
+}
