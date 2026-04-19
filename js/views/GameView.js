@@ -67,6 +67,7 @@ export class GameView {
         </span>
       `
 
+      li.dataset.playerId = player.id
       li.addEventListener('click', () => this._selectPlayer(player.id))
       this.playerList.appendChild(li)
     })
@@ -90,8 +91,27 @@ export class GameView {
   }
 
   showError(message) {
-    // You can swap this for a toast — matches your existing showToast pattern
     alert(message)
+  }
+
+  showQuestion({ questionIndex, text, options, timeLimitMs, isHost }) {
+    this.setStatus(`Question ${questionIndex + 1} — ${text}`)
+  }
+
+  updateCountdown(secondsLeft) {
+    this.setStatus(`Time left: ${secondsLeft}s`)
+  }
+
+  showQuestionResult({ correctAnswer, scores }) {
+    this.setStatus(`Answer: option ${correctAnswer} | ${scores.length} player(s) scored`)
+  }
+
+  showGameOver({ leaderboard }) {
+    this.setStatus('Game over!')
+  }
+
+  showAnswerConfirmation(result) {
+    this.setStatus(result.correct ? 'Correct!' : 'Wrong!')
   }
 
   // ── Private ─────────────────────────────────────────────────────────────

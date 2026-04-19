@@ -10,107 +10,149 @@
 
   <!-- Header -->
   <header class="bg-royal-plum border-b border-berry-lipstick px-6 py-4 flex items-center justify-between">
-    <span class="text-white/70 text-sm">Question <span id="question-number" class="text-white font-bold">1</span></span>
-
+    <span class="text-white/70 text-sm">
+      Question <span id="question-number" class="text-white font-bold">—</span>
+    </span>
     <div class="flex items-center gap-8">
-      <button class="text-white bg-blaze-orange hover:bg-blaze-orange/90 py-2 px-4 rounded-lg" disabled>Next</button>
-      <span id="timer" class="text-white font-bold text-4xl">5</span>
+      <button
+        id="btn-next"
+        disabled
+        class="text-white bg-blaze-orange hover:bg-blaze-orange/90 py-2 px-4 rounded-lg disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
+      >
+        Next Question
+      </button>
+      <span id="timer" class="text-white font-bold text-4xl">—</span>
     </div>
   </header>
 
   <!-- Question -->
   <div class="px-6 py-8 text-center">
-    <p id="question-text" class="text-white text-4xl font-bold">What is the capital of France?</p>
+    <p id="question-text" class="text-white text-4xl font-bold"></p>
   </div>
 
   <!-- Question Image -->
-  <div class="flex justify-center items-center px-6 py-4">
-    <img id="question-image" src="./../../image.png" alt="Question Image" class="w-3/4 max-w-sm h-auto rounded-xl" />
+  <div id="image-wrap" class="hidden flex justify-center items-center px-6 py-4">
+    <img id="question-image" src="" alt="Question Image" class="w-3/4 max-w-sm h-auto rounded-xl" />
   </div>
 
   <!-- Answer Buttons -->
-  <div id="answer-grid" class="grid gap-4 px-6 pb-10 flex-1 content-end">
-    <!-- Rendered by JS -->
+  <div id="answer-grid" class="grid gap-4 px-6 pb-10 flex-1 content-end"></div>
+
+  <!-- Results overlay: shown after timer ends, hidden during question -->
+  <div id="results-overlay" class="hidden fixed inset-0 bg-midnight-violet/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center gap-6 p-8">
+    <p class="text-white/60 text-sm tracking-widest uppercase">Correct Answer</p>
+    <p id="correct-label" class="text-white text-4xl font-bold"></p>
+    <div id="scores-list" class="w-full max-w-sm space-y-2 mt-4"></div>
+    <button
+      id="btn-next-overlay"
+      class="mt-6 bg-blaze-orange text-white font-bold py-3 px-8 rounded-xl hover:opacity-90 transition-opacity"
+    >
+      Next Question
+    </button>
   </div>
 
-  <script>
-    // ── Config ────────────────────────────────────────────────────────────────
+  <script type="module">
+    import { GameController } from '../../js/controllers/GameController.js'
 
-    // Change this to "truefalse" or "multichoice"
-    const questionType = "multichoice";
+    const ANSWER_COLORS = [
+      'bg-blaze-orange',
+      'bg-berry-lipstick',
+      'bg-jungle-green',
+      'bg-royal-plum',
+    ]
 
-    const multichoiceAnswers = [
-      { label: "Paris",    color: "bg-blaze-orange"   },
-      { label: "Berlin",   color: "bg-berry-lipstick" },
-      { label: "Madrid",   color: "bg-jungle-green"   },
-      { label: "Rome",     color: "bg-royal-plum"     },
-    ];
+    // ── Minimal view object wired to this page's DOM ─────────────────────────
 
-    const trueFalseAnswers = [
-      { label: "True",  color: "bg-jungle-green"   },
-      { label: "False", color: "bg-berry-lipstick" },
-    ];
+    const view = {
+      showLoading(msg)  { /* lobby only */ },
+      setTitle(t)       { document.title = t },
+      setPin(p)         { /* lobby only */ },
+      setStatus(msg)    { /* could show in header if needed */ },
+      renderPlayers()   { /* lobby only */ },
+      onKick()          { /* lobby only */ },
+      onStart()         { /* lobby only */ },
+      showError(msg)    { alert(msg) },
+      showAnswerConfirmation() { /* host doesn't answer */ },
 
-    // ── Render Answers ────────────────────────────────────────────────────────
+      showQuestion({ questionIndex, text, options, isMultiple, timeLimitMs }) {
+        document.getElementById('results-overlay').classList.add('hidden')
+        document.getElementById('question-number').textContent = questionIndex + 1
+        document.getElementById('question-text').textContent   = text
+        document.getElementById('timer').textContent           = Math.ceil(timeLimitMs / 1000)
+        document.getElementById('timer').classList.remove('text-berry-lipstick')
+        document.getElementById('btn-next').disabled           = true
 
-    function renderAnswers() {
-      const grid = document.getElementById("answer-grid");
-      const answers = questionType === "truefalse" ? trueFalseAnswers : multichoiceAnswers;
+        const grid = document.getElementById('answer-grid')
+        grid.className = `grid gap-4 px-6 pb-10 flex-1 content-end ${isMultiple ? 'grid-cols-2' : 'grid-cols-2'}`
+        grid.innerHTML = ''
 
-      grid.className = [
-        "grid gap-4 px-6 pb-10 flex-1 content-end",
-        questionType === "truefalse" ? "grid-cols-2" : "grid-cols-2"
-      ].join(" ");
+        options.forEach((label, i) => {
+          const btn = document.createElement('button')
+          btn.className = `${ANSWER_COLORS[i] ?? 'bg-royal-plum'} text-white font-bold text-lg rounded px-4 py-8 w-full`
+          btn.textContent = label
+          grid.appendChild(btn)
+        })
+      },
 
-      grid.innerHTML = "";
+      updateCountdown(secondsLeft) {
+        const el = document.getElementById('timer')
+        el.textContent = secondsLeft
+        if (secondsLeft <= 5) el.classList.add('text-berry-lipstick')
+      },
 
-      answers.forEach((answer, i) => {
-        const btn = document.createElement("button");
-        btn.className = `${answer.color} text-white font-bold text-lg rounded px-4 py-8 w-full hover:opacity-90 active:scale-95 transition-transform`;
-        btn.textContent = answer.label;
-        btn.addEventListener("click", () => selectAnswer(btn, i));
-        grid.appendChild(btn);
-      });
+      showQuestionResult({ correctAnswer, scores, onNext }) {
+        // Highlight correct answer button (1-indexed)
+        const buttons = document.querySelectorAll('#answer-grid button')
+        buttons.forEach((btn, i) => {
+          if (i !== correctAnswer - 1) btn.classList.add('opacity-30')
+        })
+
+        // Show results overlay
+        const overlay = document.getElementById('results-overlay')
+        const correctBtn = buttons[correctAnswer - 1]
+        document.getElementById('correct-label').textContent = correctBtn?.textContent ?? `Option ${correctAnswer}`
+
+        const scoresList = document.getElementById('scores-list')
+        scoresList.innerHTML = scores.slice(0, 5).map(s =>
+          `<div class="flex justify-between text-white px-4 py-2 bg-royal-plum rounded">
+            <span>${s.player_name}</span><span class="font-bold">${s.score}</span>
+          </div>`
+        ).join('')
+
+        overlay.classList.remove('hidden')
+
+        document.getElementById('btn-next-overlay').onclick = () => {
+          overlay.classList.add('hidden')
+          onNext?.()
+        }
+        document.getElementById('btn-next').disabled = false
+        document.getElementById('btn-next').onclick  = () => {
+          overlay.classList.add('hidden')
+          onNext?.()
+        }
+      },
+
+      showGameOver({ leaderboard }) {
+        document.getElementById('results-overlay').classList.remove('hidden')
+        document.getElementById('correct-label').textContent = 'Game Over!'
+        document.getElementById('btn-next-overlay').textContent = 'Back to Lobby'
+        document.getElementById('btn-next-overlay').onclick = () => {
+          window.location.href = '/pages/game/index.html'
+        }
+
+        const scoresList = document.getElementById('scores-list')
+        scoresList.innerHTML = leaderboard.map((s, i) =>
+          `<div class="flex justify-between text-white px-4 py-2 bg-royal-plum rounded">
+            <span class="text-white/60">#${i + 1}</span>
+            <span>${s.player_name}</span>
+            <span class="font-bold">${s.score}</span>
+          </div>`
+        ).join('')
+      },
     }
 
-    // ── Select Answer ─────────────────────────────────────────────────────────
-
-    function selectAnswer(btn, index) {
-      const allBtns = document.querySelectorAll("#answer-grid button");
-      allBtns.forEach(b => {
-        b.disabled = true;
-        b.classList.add("opacity-40");
-      });
-
-      btn.classList.remove("opacity-40");
-      btn.classList.add("ring-4", "ring-midnight-violet");
-    }
-
-    // ── Timer ─────────────────────────────────────────────────────────────────
-
-    let timeLeft = 5;
-    const timerEl = document.getElementById("timer");
-
-    const countdown = setInterval(() => {
-      timeLeft--;
-      timerEl.textContent = timeLeft;
-      if (timeLeft <= 5) timerEl.classList.add("text-berry-lipstick");
-      if (timeLeft <= 0) {
-        clearInterval(countdown);
-        timerEl.textContent = "0";
-        document.querySelectorAll("#answer-grid button").forEach((b, i) => {
-          if (i != 0) {
-            b.disabled = true;
-            b.classList.add("opacity-40");
-          }
-          
-        });
-      }
-    }, 1000);
-
-    // ── Init ──────────────────────────────────────────────────────────────────
-    renderAnswers();
+    const controller = new GameController(view)
+    await controller.resumeAsHost()
   </script>
-
 </body>
 </html>

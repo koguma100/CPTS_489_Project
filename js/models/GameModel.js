@@ -113,7 +113,7 @@ export class GameModel {
         {
           game:        gameId,
           player_name: playerName,
-          score:       0,
+          score:       50,
         },
         {
           onConflict:       'game,player_name',
@@ -134,6 +134,58 @@ export class GameModel {
    * @param {string} gameId
    * @returns {Array<{ player_name: string, score: number }>}
    */
+  async getQuestions(quizId) {
+    const { data, error } = await supabase
+      .from('quiz_questions')
+      .select('order, question, answer1, answer2, answer3, answer4, isMultiple, correctAnswer, thumbnail')
+      .eq('quiz', quizId)
+      .order('order', { ascending: true })
+
+    if (error) throw error
+
+    return data.map(q => ({
+      order:         q.order,
+      text:          q.question,
+      options:       q.isMultiple
+        ? [q.answer1, q.answer2, q.answer3, q.answer4].filter(Boolean)
+        : [q.answer1, q.answer2].filter(Boolean),
+      correctAnswer: q.correctAnswer,  // 1-indexed
+      isMultiple:    q.isMultiple,
+      thumbnail:     q.thumbnail,
+    }))
+  }
+
+  async deletePlayer(playerId) {
+    const { error } = await supabase
+      .from('player_scores')
+      .delete()
+      .eq('id', playerId)
+
+    if (error) throw error
+  }
+
+  async getPlayerScore(gameId, playerName) {
+    const { data, error } = await supabase
+      .from('player_scores')
+      .select('score')
+      .eq('game', gameId)
+      .eq('player_name', playerName)
+      .single()
+
+    if (error) throw error
+    return data.score
+  }
+
+  async setScore(gameId, playerName, newScore) {
+    const { error } = await supabase
+      .from('player_scores')
+      .update({ score: newScore })
+      .eq('game', gameId)
+      .eq('player_name', playerName)
+
+    if (error) throw error
+  }
+
   async getPlayers(gameId) {
     const { data, error } = await supabase
       .from('player_scores')
@@ -242,11 +294,11 @@ export class GameModel {
 
   // ─── Broadcast Helpers (host only) ───────────────────────────────────────
 
-  async broadcastQuestion(channel, { questionIndex, text, options, timeLimitMs }) {
+  async broadcastQuestion(channel, { questionIndex, text, options, isMultiple, correctAnswer, timeLimitMs }) {
     await channel.send({
       type:    'broadcast',
       event:   'QUESTION_START',
-      payload: { questionIndex, text, options, timeLimitMs, startedAt: Date.now() },
+      payload: { questionIndex, text, options, isMultiple, correctAnswer, timeLimitMs, startedAt: Date.now() },
     })
   }
 

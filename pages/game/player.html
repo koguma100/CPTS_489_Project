@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Player Screen</title>
+    <title>Player</title>
     <link rel="stylesheet" href="../../public/output.css">
     <style>
         .wager-btn {
             transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
             aspect-ratio: 1 / 1;
         }
-        .wager-btn:active {
-            transform: scale(0.95);
-        }
+        .wager-btn:active  { transform: scale(0.95); }
         .wager-btn.selected {
             transform: scale(1.06);
             filter: brightness(1.25);
@@ -22,34 +20,37 @@
 </head>
 <body class="bg-midnight-violet min-h-dvh font-mono flex flex-col overflow-hidden">
 
-    <!-- Loading Screen (shown by default between questions) -->
-    <div id="loading-screen" class="fixed inset-0 z-40 bg-midnight-violet flex flex-col items-center justify-between p-10">
+    <!-- Wager Screen -->
+    <div id="wager-screen" class="fixed inset-0 z-40 bg-midnight-violet flex flex-col items-center justify-between p-10">
 
         <div class="text-center">
-            <h1 class="text-white">Game ID: 123456</h1>
-            <p class="text-white text-4xl animate-pulse">Total Points: 100</p>
+            <p id="player-name-display" class="text-white/50 text-xs tracking-widest uppercase mb-1"></p>
+            <p id="score-display" class="text-white text-4xl font-bold">50 pts</p>
+            <p class="text-white/40 text-xs mt-1">
+                Time left: <span id="wager-timer" class="font-bold">—</span>s
+            </p>
         </div>
 
-        <!-- Wager Section -->
         <div class="flex flex-col items-center gap-4 w-full max-w-xs">
             <p class="text-white/60 text-xs tracking-widest uppercase">Place Your Wager</p>
             <div class="grid grid-cols-2 gap-3 w-full">
-                <button id="wager-default" onclick="selectWager(this, 2)"
+                <button id="wager-fixed"
+                    data-type="fixed" data-value="2"
                     class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
                     <span class="text-2xl font-bold">2</span>
                     <span class="text-xs opacity-70 tracking-widest uppercase">pts</span>
                 </button>
-                <button onclick="selectWager(this, '10%')"
+                <button data-type="pct" data-value="0.10"
                     class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
                     <span class="text-2xl font-bold">10%</span>
                     <span class="text-xs opacity-70 tracking-widest uppercase">of pts</span>
                 </button>
-                <button onclick="selectWager(this, '25%')"
+                <button data-type="pct" data-value="0.25"
                     class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
                     <span class="text-2xl font-bold">25%</span>
                     <span class="text-xs opacity-70 tracking-widest uppercase">of pts</span>
                 </button>
-                <button onclick="selectWager(this, '50%')"
+                <button data-type="pct" data-value="0.50"
                     class="wager-btn bg-jungle-green rounded-2xl flex flex-col items-center justify-center shadow-lg shadow-jungle-green/40 text-white">
                     <span class="text-2xl font-bold">50%</span>
                     <span class="text-xs opacity-70 tracking-widest uppercase">of pts</span>
@@ -58,158 +59,220 @@
             <p id="wager-label" class="text-white/30 text-xs tracking-widest uppercase h-4"></p>
         </div>
 
-        <button onclick="startQuestion()" class="text-white/20 text-xs tracking-widest uppercase border border-white/10 px-4 py-2 rounded-full hover:text-white/50 transition-colors">
-            ▶ Start Question (dev)
+        <button id="btn-confirm-wager"
+            class="bg-blaze-orange text-white font-bold py-3 px-8 rounded-xl hover:opacity-90 transition-opacity tracking-widest uppercase">
+            Lock In Wager
         </button>
     </div>
 
     <!-- Answer Area -->
     <main class="flex-1 flex flex-col gap-3 p-3">
-
-        <!-- Mode Toggle -->
-        <div class="flex justify-center gap-2">
-            <button onclick="setMode('multi')" id="btn-multi"
-                class="text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-white/40 bg-white/10 text-white cursor-pointer">
-                4 Options
-            </button>
-            <button onclick="setMode('tf')" id="btn-tf"
-                class="text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border border-white/15 bg-white/5 text-white/40 cursor-pointer">
-                True / False
-            </button>
+        <div class="flex justify-between items-center px-1 py-2">
+            <p class="text-white/40 text-xs tracking-widest uppercase">
+                Wagered: <span id="wagered-display" class="text-white font-bold">—</span>
+            </p>
+            <p class="text-white/40 text-xs tracking-widest uppercase">
+                Time: <span id="answer-timer" class="text-white font-bold">—</span>s
+            </p>
         </div>
-
-        <!-- 4-Option Grid -->
-        <div id="grid-multi" class="grid grid-cols-2 grid-rows-2 gap-3 flex-1">
-            <button onclick="selectAnswer(this, 'A')"
-                class="answer-btn bg-blaze-orange rounded-2xl flex items-center justify-center shadow-lg shadow-blaze-orange/40 active:scale-95 transition-transform">
-                <span class="text-white text-7xl">▲</span>
-            </button>
-            <button onclick="selectAnswer(this, 'B')"
-                class="answer-btn bg-berry-lipstick rounded-2xl flex items-center justify-center shadow-lg shadow-berry-lipstick/40 active:scale-95 transition-transform">
-                <span class="text-white text-7xl">◆</span>
-            </button>
-            <button onclick="selectAnswer(this, 'C')"
-                class="answer-btn bg-royal-plum rounded-2xl flex items-center justify-center shadow-lg shadow-royal-plum/40 active:scale-95 transition-transform">
-                <span class="text-white text-7xl">●</span>
-            </button>
-            <button onclick="selectAnswer(this, 'D')"
-                class="answer-btn bg-jungle-green rounded-2xl flex items-center justify-center shadow-lg shadow-jungle-green/40 active:scale-95 transition-transform">
-                <span class="text-white text-7xl">★</span>
-            </button>
-        </div>
-
-        <!-- True/False Grid -->
-        <div id="grid-tf" class="hidden grid-cols-2 gap-3 flex-1">
-            <button onclick="selectAnswer(this, 'True')"
-                class="answer-btn bg-jungle-green rounded-2xl flex items-center justify-center shadow-lg shadow-jungle-green/40 active:scale-95 transition-transform">
-                <span class="text-8xl text-white">✓</span>
-            </button>
-            <button onclick="selectAnswer(this, 'False')"
-                class="answer-btn bg-berry-lipstick rounded-2xl flex items-center justify-center shadow-lg shadow-berry-lipstick/40 active:scale-95 transition-transform">
-                <span class="text-8xl text-white">✕</span>
-            </button>
-        </div>
-
+        <div id="answer-grid" class="grid grid-cols-2 gap-3 flex-1"></div>
     </main>
-
-    <p class="text-center text-white/20 text-xs tracking-widest uppercase pb-3">Tap to answer</p>
 
     <!-- Feedback Overlay -->
     <div id="feedback" class="fixed inset-0 z-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="absolute inset-0 bg-midnight-violet/85 backdrop-blur-sm"></div>
-        <div class="relative z-10 text-center">
-            <span class="text-7xl block mb-3">📨</span>
+        <div class="absolute inset-0 bg-midnight-violet/90 backdrop-blur-sm"></div>
+        <div class="relative z-10 text-center space-y-3 px-8">
+            <span id="feedback-icon" class="text-7xl block"></span>
             <p id="feedback-text" class="text-white text-3xl font-bold tracking-widest uppercase"></p>
+            <p id="feedback-points" class="text-white/70 text-lg"></p>
+            <p class="text-white/30 text-sm mt-6 animate-pulse">Waiting for next question…</p>
         </div>
     </div>
 
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        // document.getElementById('username-display').textContent = params.get('name') || 'Player1';
+    <script type="module">
+        import { GameController } from '../../js/controllers/GameController.js'
+        import { GameModel }      from '../../js/models/GameModel.js'
 
-        let answered = false;
-        let selectedWager = null;
+        const model      = new GameModel()
+        const gamePin    = sessionStorage.getItem('gamePin')
+        const playerName = sessionStorage.getItem('playerName')
+        const gameId     = sessionStorage.getItem('gameId')
 
-        // Auto-select the first wager button on load
-        window.addEventListener('DOMContentLoaded', () => {
-            selectWager(document.getElementById('wager-default'), 2);
-        });
-
-        function selectWager(btn, value) {
-            // Deselect all
-            document.querySelectorAll('.wager-btn').forEach(b => b.classList.remove('selected'));
-            // Select this one
-            btn.classList.add('selected');
-            selectedWager = value;
-            const label = document.getElementById('wager-label');
-            label.textContent = `Wagering ${value}${typeof value === 'number' ? ' pts' : ' of your points'}`;
+        if (!gamePin || !playerName || !gameId) {
+            window.location.href = '/pages/joinGame.html'
         }
 
-        // Call from your host/game logic to show answer buttons
-        function startQuestion() {
-            document.getElementById('loading-screen').classList.add('hidden');
-            answered = false;
-            document.querySelectorAll('.answer-btn').forEach(b => {
-                b.style.opacity = '';
-                b.style.transform = '';
-                b.style.filter = '';
-                b.disabled = false;
-            });
+        const ANSWER_COLORS = [
+            'bg-blaze-orange',
+            'bg-berry-lipstick',
+            'bg-royal-plum',
+            'bg-jungle-green',
+        ]
+
+        let currentScore    = 50
+        let selectedWager   = 2
+        let currentQuestion = null
+        let answered        = false
+        let wagerConfirmed  = false
+
+        // ── Load current score ────────────────────────────────────────────────
+        try {
+            currentScore = await model.getPlayerScore(gameId, playerName)
+        } catch { currentScore = 50 }
+
+        // ── Load first question from sessionStorage (set by playerLobby) ──────
+        const stored = sessionStorage.getItem('currentQuestion')
+        if (stored) {
+            currentQuestion = JSON.parse(stored)
+            sessionStorage.removeItem('currentQuestion')
         }
 
-        // Call from your host/game logic to return to loading screen
-        function endQuestion() {
-            document.getElementById('loading-screen').classList.remove('hidden');
-            // Reset wager selection to default
-            document.querySelectorAll('.wager-btn').forEach(b => b.classList.remove('selected'));
-            selectWager(document.getElementById('wager-default'), 2);
+        // ── UI helpers ────────────────────────────────────────────────────────
+        document.getElementById('player-name-display').textContent = playerName
+
+        function updateScoreDisplay() {
+            document.getElementById('score-display').textContent = `${currentScore} pts`
         }
 
-        function setMode(mode) {
-            answered = false;
-            const isMulti = mode === 'multi';
-
-            document.getElementById('grid-multi').classList.toggle('hidden', !isMulti);
-            document.getElementById('grid-multi').classList.toggle('grid', isMulti);
-            document.getElementById('grid-tf').classList.toggle('hidden', isMulti);
-            document.getElementById('grid-tf').classList.toggle('grid', !isMulti);
-
-            const activeClass = 'text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border cursor-pointer border-white/40 bg-white/10 text-white';
-            const inactiveClass = 'text-xs tracking-widest uppercase px-4 py-1.5 rounded-full border cursor-pointer border-white/15 bg-white/5 text-white/40';
-
-            document.getElementById('btn-multi').className = isMulti ? activeClass : inactiveClass;
-            document.getElementById('btn-tf').className    = !isMulti ? activeClass : inactiveClass;
-
-            document.querySelectorAll('.answer-btn').forEach(b => {
-                b.style.opacity = '';
-                b.style.transform = '';
-                b.disabled = false;
-            });
+        function showWagerScreen() {
+            document.getElementById('feedback').classList.add('opacity-0', 'pointer-events-none')
+            document.getElementById('feedback').classList.remove('opacity-100')
+            document.getElementById('wager-screen').classList.remove('hidden')
+            document.getElementById('wager-fixed').click()
+            answered       = false
+            wagerConfirmed = false
+            updateScoreDisplay()
         }
 
-        function selectAnswer(btn, choice) {
-            if (answered) return;
-            answered = true;
+        function showAnswerScreen() {
+            if (!currentQuestion) return
+            document.getElementById('wager-screen').classList.add('hidden')
+            document.getElementById('wagered-display').textContent = `${selectedWager} pts`
 
-            document.querySelectorAll('.answer-btn').forEach(b => {
-                if (b !== btn) b.style.opacity = '0.3';
-                b.disabled = true;
-            });
-
-            btn.style.transform = 'scale(1.05)';
-            btn.style.filter = 'brightness(1.2)';
-
-            setTimeout(() => {
-                const fb = document.getElementById('feedback');
-                document.getElementById('feedback-text').textContent = `"${choice}" Sent!`;
-                fb.classList.remove('opacity-0', 'pointer-events-none');
-                fb.classList.add('opacity-100');
-                setTimeout(() => {
-                    fb.classList.add('opacity-0', 'pointer-events-none');
-                    fb.classList.remove('opacity-100');
-                }, 1800);
-            }, 250);
+            const grid = document.getElementById('answer-grid')
+            grid.innerHTML = ''
+            currentQuestion.options.forEach((label, i) => {
+                const btn = document.createElement('button')
+                btn.className = `${ANSWER_COLORS[i] ?? 'bg-royal-plum'} text-white font-bold text-2xl rounded-2xl flex items-center justify-center shadow-lg active:scale-95 transition-transform`
+                btn.textContent = label
+                btn.addEventListener('click', () => handleAnswer(i + 1, btn))
+                grid.appendChild(btn)
+            })
         }
+
+        function showFeedback(isCorrect, delta) {
+            document.getElementById('feedback-icon').textContent  = isCorrect ? '✅' : '❌'
+            document.getElementById('feedback-text').textContent  = isCorrect ? 'Correct!' : 'Wrong!'
+            document.getElementById('feedback-points').textContent =
+                `${delta >= 0 ? '+' : ''}${delta} pts — now ${currentScore} pts`
+            const fb = document.getElementById('feedback')
+            fb.classList.remove('opacity-0', 'pointer-events-none')
+            fb.classList.add('opacity-100')
+        }
+
+        // ── Wager buttons ─────────────────────────────────────────────────────
+        document.querySelectorAll('.wager-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.wager-btn').forEach(b => b.classList.remove('selected'))
+                btn.classList.add('selected')
+                const type  = btn.dataset.type
+                const value = parseFloat(btn.dataset.value)
+                selectedWager = type === 'fixed'
+                    ? value
+                    : Math.max(1, Math.round(currentScore * value))
+                document.getElementById('wager-label').textContent =
+                    `Wagering ${selectedWager} pt${selectedWager !== 1 ? 's' : ''}`
+            })
+        })
+        document.getElementById('wager-fixed').click()
+
+        document.getElementById('btn-confirm-wager').addEventListener('click', () => {
+            wagerConfirmed = true
+            showAnswerScreen()
+        })
+
+        // ── Answer submission ─────────────────────────────────────────────────
+        async function handleAnswer(answerIndex, btn) {
+            if (answered || !currentQuestion) return
+            answered = true
+
+            document.querySelectorAll('#answer-grid button').forEach(b => {
+                b.disabled = true
+                if (b !== btn) b.style.opacity = '0.3'
+            })
+            btn.style.transform = 'scale(1.05)'
+
+            const isCorrect = answerIndex === currentQuestion.correctAnswer
+            const delta     = isCorrect ? selectedWager : -selectedWager
+            const newScore  = Math.max(0, currentScore + delta)
+
+            try {
+                await model.setScore(gameId, playerName, newScore)
+                currentScore = newScore
+            } catch (e) { console.error('Score update failed:', e) }
+
+            showFeedback(isCorrect, delta)
+        }
+
+        // ── Controller view (handles broadcasts for subsequent questions) ─────
+        const view = {
+            setPin()    { },
+            setStatus() { },
+            setTitle()  { },
+            showLoading(){ },
+            showError(msg){ alert(msg) },
+            renderPlayers(){ },
+            onKick()   { },
+            onStart()  { },
+            showAnswerConfirmation() { },
+
+            showQuestion(data) {
+                currentQuestion = data
+                showWagerScreen()
+            },
+
+            updateCountdown(s) {
+                document.getElementById('wager-timer').textContent  = s
+                document.getElementById('answer-timer').textContent = s
+            },
+
+            showQuestionResult({ correctAnswer }) {
+                if (answered) return
+                // Timer ran out before player answered
+                if (wagerConfirmed) {
+                    const delta    = -selectedWager
+                    const newScore = Math.max(0, currentScore + delta)
+                    model.setScore(gameId, playerName, newScore).catch(console.error)
+                    currentScore = newScore
+                    showFeedback(false, delta)
+                } else {
+                    document.getElementById('feedback-icon').textContent  = '⏱️'
+                    document.getElementById('feedback-text').textContent  = 'Too Slow!'
+                    document.getElementById('feedback-points').textContent = 'No wager placed'
+                    const fb = document.getElementById('feedback')
+                    fb.classList.remove('opacity-0', 'pointer-events-none')
+                    fb.classList.add('opacity-100')
+                }
+            },
+
+            showGameOver({ leaderboard }) {
+                const self = leaderboard?.find(s => s.player_name === playerName)
+                document.getElementById('feedback-icon').textContent  = '🏆'
+                document.getElementById('feedback-text').textContent  = 'Game Over!'
+                document.getElementById('feedback-points').textContent =
+                    self ? `Final score: ${self.score} pts` : ''
+                const fb = document.getElementById('feedback')
+                fb.querySelector('p.animate-pulse').textContent = ''
+                fb.classList.remove('opacity-0', 'pointer-events-none')
+                fb.classList.add('opacity-100')
+            },
+        }
+
+        const controller = new GameController(view)
+        controller.connectToLobby()
+
+        // Show wager screen immediately for the first question
+        if (currentQuestion) showWagerScreen()
     </script>
 </body>
 </html>

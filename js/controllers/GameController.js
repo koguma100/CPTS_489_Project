@@ -57,6 +57,7 @@ export class GameController {
       sessionStorage.setItem('hostGameId',  this.game.id)
       sessionStorage.setItem('hostGamePin', this.game.pin)
       sessionStorage.setItem('hostQuizId',  quizId)
+      sessionStorage.setItem('hostId',      hostId)
 
       const quiz = await this.model.getQuiz(quizId)
       this.view.setTitle(quiz.title)
@@ -81,7 +82,9 @@ export class GameController {
   async reconnectGame(hostId, gameId, pin, quizId) {
     this.isHost     = true
     this.playerName = hostId
-    this.game       = { id: gameId, pin, question_duration_ms: 20000 }
+    this.game       = { id: gameId, pin, quiz: quizId, question_duration_ms: 20000 }
+
+    sessionStorage.setItem('hostId', hostId)
 
     this.view.showLoading('Reconnecting…')
 
@@ -101,6 +104,26 @@ export class GameController {
     } catch (err) {
       this.view.showError('Failed to reconnect: ' + err.message)
     }
+  }
+
+  async resumeAsHost() {
+    const hostId = sessionStorage.getItem('hostId')
+    const pin    = sessionStorage.getItem('hostGamePin')
+    const quizId = sessionStorage.getItem('hostQuizId')
+
+    if (!hostId || !pin || !quizId) {
+      this.view.showError('No active game found. Return to lobby.')
+      return
+    }
+
+    this.isHost     = true
+    this.playerName = hostId
+    this.game       = await this.model.getGameByPin(pin)
+    this.questions  = await this.model.getQuestions(quizId)
+    this.currentQuestionIndex = this.game.current_question ?? 0
+
+    this._postSubscribe = () => this._startNextQuestion()
+    this._connectChannel(pin, hostId)
   }
 
   // ─── Player: join an existing game ───────────────────────────────────────
@@ -178,7 +201,9 @@ export class GameController {
             ? players.filter(p => p.name !== this.playerName)
             : players
           this.players = visible
-          this.view.renderPlayers(visible)
+          if (!this.isHost) {
+            this.view.renderPlayers(visible)
+          }
         },
 
         onBroadcast: (event, payload) => {
@@ -194,6 +219,10 @@ export class GameController {
           this.view.setStatus(
             this.isHost ? 'Waiting for players…' : 'Connected — waiting for host…'
           )
+          if (this._postSubscribe) {
+            this._postSubscribe()
+            this._postSubscribe = null
+          }
         },
       }
     )
@@ -246,16 +275,21 @@ export class GameController {
   // ─── Host: game flow ──────────────────────────────────────────────────────
 
   async _handleStart() {
-    if (this.players.length === 0) {
+    const dbPlayers = await this.model.getPlayers(this.game.id)
+    if (dbPlayers.length === 0) {
       this.view.showError('No players have joined yet.')
       return
     }
 
-    // Load questions for this quiz from DB
-    // (you'll add a getQuestions method to the model when ready)
-    // For now advance the game phase
+    this.questions = await this.model.getQuestions(this.game.quiz)
+    if (this.questions.length === 0) {
+      this.view.showError('This quiz has no questions.')
+      return
+    }
+
+    this.currentQuestionIndex = 0
     await this.model.advanceQuestion(this.game.id, 0)
-    this._startNextQuestion()
+    window.location.href = '/pages/game/view.html'
   }
 
   async _startNextQuestion() {
@@ -267,19 +301,21 @@ export class GameController {
     this._answered          = false
     this._questionStartedAt = Date.now()
 
-    // Broadcast question to all players
+    const q = this.currentQuestion
     await this.model.broadcastQuestion(this.channel, {
-      questionIndex: this.currentQuestionIndex,
-      text:          this.currentQuestion.text,
-      options:       this.currentQuestion.options,
-      timeLimitMs:   this.game.question_duration_ms,
+      questionIndex:  this.currentQuestionIndex,
+      text:           q.text,
+      options:        q.options,
+      isMultiple:     q.isMultiple,
+      correctAnswer:  q.correctAnswer,
+      timeLimitMs:    this.game.question_duration_ms,
     })
 
-    // Host renders locally too (broadcast has self:false)
     this._onQuestionStart({
       questionIndex: this.currentQuestionIndex,
-      text:          this.currentQuestion.text,
-      options:       this.currentQuestion.options,
+      text:          q.text,
+      options:       q.options,
+      isMultiple:    q.isMultiple,
       timeLimitMs:   this.game.question_duration_ms,
       startedAt:     this._questionStartedAt,
     })
@@ -307,13 +343,12 @@ export class GameController {
     const scores = await this.model.getScores(this.game.id)
 
     await this.model.broadcastQuestionEnd(this.channel, {
-      correctAnswer: this.currentQuestion.correct_answer,
+      correctAnswer: this.currentQuestion.correctAnswer,
       scores,
     })
 
-    // Host renders locally
     this._onQuestionEnd({
-      correctAnswer: this.currentQuestion.correct_answer,
+      correctAnswer: this.currentQuestion.correctAnswer,
       scores,
     })
 
@@ -328,17 +363,21 @@ export class GameController {
 
   // ─── Host: kick a player ──────────────────────────────────────────────────
 
-  _handleKick(playerId) {
-    this.players = this.players.filter(p => p.id !== playerId)
-    this.view.renderPlayers(this.players)
-    // Optionally: broadcast a KICK event so the player's client redirects
-    // this.channel.send({ type: 'broadcast', event: 'KICKED', payload: { playerId } })
+  async _handleKick(playerId) {
+    try {
+      await this.model.deletePlayer(playerId)
+      const players = await this.model.getPlayers(this.game.id)
+      this.players = players
+      this.view.renderPlayers(players.map(p => ({ id: p.id, name: p.player_name })))
+    } catch (err) {
+      this.view.showError('Failed to kick player: ' + err.message)
+    }
   }
 
   // ─── Shared: question rendering ───────────────────────────────────────────
 
   // Triggered by broadcast on players, called directly on host
-  _onQuestionStart({ questionIndex, text, options, timeLimitMs, startedAt }) {
+  _onQuestionStart({ questionIndex, text, options, isMultiple, correctAnswer, timeLimitMs, startedAt }) {
     this.phase                = 'question_active'
     this._answered            = false
     this._questionStartedAt   = startedAt ?? Date.now()
@@ -348,6 +387,8 @@ export class GameController {
       questionIndex,
       text,
       options,
+      isMultiple,
+      correctAnswer,
       timeLimitMs,
       isHost:   this.isHost,
       onAnswer: (answer) => this._handleAnswer(answer),

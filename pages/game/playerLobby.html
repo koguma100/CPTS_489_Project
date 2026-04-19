@@ -6,16 +6,14 @@
     <title>Waiting for Host</title>
     <link rel="stylesheet" href="../../public/output.css">
 </head>
-<body class="bg-midnight-violet min-h-dvh font-mono flex flex-col overflow-hidden" data-page="lobby-player">
+<body class="bg-midnight-violet min-h-dvh font-mono flex flex-col overflow-hidden">
 
     <div class="fixed inset-0 z-40 bg-midnight-violet flex flex-col items-center justify-between p-10">
 
-        <!-- Top: player name -->
         <div class="text-center">
             <p id="player-name-display" class="text-white/50 text-sm tracking-widest uppercase"></p>
         </div>
 
-        <!-- Middle: status + pin -->
         <div class="flex flex-col items-center gap-6 text-center">
             <p class="text-white text-2xl animate-pulse tracking-widest uppercase">Waiting for host…</p>
             <div class="flex flex-col items-center gap-1">
@@ -24,7 +22,6 @@
             </div>
         </div>
 
-        <!-- Bottom: joined confirmation -->
         <p class="text-white/20 text-xs tracking-widest uppercase">You're in — sit tight</p>
 
     </div>
@@ -33,6 +30,35 @@
         const name = sessionStorage.getItem('playerName')
         if (name) document.getElementById('player-name-display').textContent = name
     </script>
-    <script type="module" src="../../js/main.js"></script>
+
+    <script type="module">
+        import { GameController } from '../../js/controllers/GameController.js'
+
+        const view = {
+            setPin(pin)   { document.getElementById('game-pin').textContent = pin },
+            setStatus()   { },
+            setTitle()    { },
+            showLoading() { },
+            showError(msg){ alert(msg) },
+            renderPlayers(){ },
+            onKick()      { },
+            onStart()     { },
+            showAnswerConfirmation() { },
+            updateCountdown()        { },
+            showQuestionResult()     { },
+
+            showQuestion(data) {
+                sessionStorage.setItem('currentQuestion', JSON.stringify(data))
+                window.location.href = '/pages/game/player.html'
+            },
+
+            showGameOver() {
+                window.location.href = '/pages/game/playerLobby.html'
+            },
+        }
+
+        const controller = new GameController(view)
+        await controller.connectToLobby()
+    </script>
 </body>
 </html>
