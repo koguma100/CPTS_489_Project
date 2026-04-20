@@ -616,6 +616,10 @@ video {
   pointer-events: none;
 }
 
+.visible {
+  visibility: visible;
+}
+
 .fixed {
   position: fixed;
 }
@@ -737,6 +741,10 @@ video {
 
 .mt-3 {
   margin-top: 0.75rem;
+}
+
+.mt-4 {
+  margin-top: 1rem;
 }
 
 .mt-5 {
@@ -1007,10 +1015,6 @@ video {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.grid-rows-2 {
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-}
-
 .flex-col {
   flex-direction: column;
 }
@@ -1232,14 +1236,6 @@ video {
   border-color: rgb(255 255 255 / 0.1);
 }
 
-.border-white\/15 {
-  border-color: rgb(255 255 255 / 0.15);
-}
-
-.border-white\/40 {
-  border-color: rgb(255 255 255 / 0.4);
-}
-
 .bg-berry-lipstick {
   --tw-bg-opacity: 1;
   background-color: rgb(217 3 104 / var(--tw-bg-opacity, 1));
@@ -1295,6 +1291,11 @@ video {
   background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
 
+.bg-green-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 252 231 / var(--tw-bg-opacity, 1));
+}
+
 .bg-green-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(240 253 244 / var(--tw-bg-opacity, 1));
@@ -1331,8 +1332,8 @@ video {
   background-color: rgb(41 23 32 / 0.6);
 }
 
-.bg-midnight-violet\/85 {
-  background-color: rgb(41 23 32 / 0.85);
+.bg-midnight-violet\/90 {
+  background-color: rgb(41 23 32 / 0.9);
 }
 
 .bg-red-50 {
@@ -1381,10 +1382,6 @@ video {
 
 .bg-white\/15 {
   background-color: rgb(255 255 255 / 0.15);
-}
-
-.bg-white\/5 {
-  background-color: rgb(255 255 255 / 0.05);
 }
 
 .bg-gradient-to-r {
@@ -1450,6 +1447,11 @@ video {
   padding: 2rem;
 }
 
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -1478,6 +1480,11 @@ video {
 .px-6 {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .py-0\.5 {
@@ -1544,16 +1551,16 @@ video {
   padding-bottom: 2.5rem;
 }
 
-.pb-3 {
-  padding-bottom: 0.75rem;
-}
-
 .pb-6 {
   padding-bottom: 1.5rem;
 }
 
 .pt-4 {
   padding-top: 1rem;
+}
+
+.pt-6 {
+  padding-top: 1.5rem;
 }
 
 .pt-8 {
@@ -1607,11 +1614,6 @@ video {
 
 .text-7xl {
   font-size: 4.5rem;
-  line-height: 1;
-}
-
-.text-8xl {
-  font-size: 6rem;
   line-height: 1;
 }
 
@@ -1714,6 +1716,11 @@ video {
   color: rgb(31 41 55 / var(--tw-text-opacity, 1));
 }
 
+.text-green-500 {
+  --tw-text-opacity: 1;
+  color: rgb(34 197 94 / var(--tw-text-opacity, 1));
+}
+
 .text-green-600 {
   --tw-text-opacity: 1;
   color: rgb(22 163 74 / var(--tw-text-opacity, 1));
@@ -1803,8 +1810,8 @@ video {
   opacity: 1;
 }
 
-.opacity-40 {
-  opacity: 0.4;
+.opacity-30 {
+  opacity: 0.3;
 }
 
 .opacity-70 {
@@ -1847,23 +1854,8 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
-.shadow-berry-lipstick\/40 {
-  --tw-shadow-color: rgb(217 3 104 / 0.4);
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.shadow-blaze-orange\/40 {
-  --tw-shadow-color: rgb(247 92 3 / 0.4);
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
 .shadow-jungle-green\/40 {
   --tw-shadow-color: rgb(4 167 119 / 0.4);
-  --tw-shadow: var(--tw-shadow-colored);
-}
-
-.shadow-royal-plum\/40 {
-  --tw-shadow-color: rgb(130 2 99 / 0.4);
   --tw-shadow: var(--tw-shadow-colored);
 }
 
@@ -1876,17 +1868,6 @@ video {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.ring-4 {
-  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
-  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(4px + var(--tw-ring-offset-width)) var(--tw-ring-color);
-  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-}
-
-.ring-midnight-violet {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(41 23 32 / var(--tw-ring-opacity, 1));
 }
 
 .ring-white\/10 {
@@ -2041,10 +2022,6 @@ video {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-
-.hover\:text-white\/50:hover {
-  color: rgb(255 255 255 / 0.5);
 }
 
 .hover\:underline:hover {

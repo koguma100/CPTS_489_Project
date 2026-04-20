@@ -61,6 +61,7 @@ export class GameController {
 
       const quiz = await this.model.getQuiz(quizId)
       this.view.setTitle(quiz.title)
+      this.view.setThumbnail?.(quiz.thumbnail)
       this.view.setPin(this.game.pin)
       this.view.setStatus('Waiting for players…')
 
@@ -91,6 +92,7 @@ export class GameController {
     try {
       const quiz = await this.model.getQuiz(quizId)
       this.view.setTitle(quiz.title)
+      this.view.setThumbnail?.(quiz.thumbnail)
       this.view.setPin(pin)
       this.view.setStatus('Waiting for players…')
 
@@ -309,6 +311,7 @@ export class GameController {
       isMultiple:     q.isMultiple,
       correctAnswer:  q.correctAnswer,
       timeLimitMs:    this.game.question_duration_ms,
+      thumbnail:      q.thumbnail,
     })
 
     this._onQuestionStart({
@@ -317,6 +320,7 @@ export class GameController {
       options:       q.options,
       isMultiple:    q.isMultiple,
       timeLimitMs:   this.game.question_duration_ms,
+      thumbnail:     q.thumbnail,
       startedAt:     this._questionStartedAt,
     })
 
@@ -377,7 +381,7 @@ export class GameController {
   // ─── Shared: question rendering ───────────────────────────────────────────
 
   // Triggered by broadcast on players, called directly on host
-  _onQuestionStart({ questionIndex, text, options, isMultiple, correctAnswer, timeLimitMs, startedAt }) {
+  _onQuestionStart({ questionIndex, text, options, isMultiple, correctAnswer, timeLimitMs, thumbnail, startedAt }) {
     this.phase                = 'question_active'
     this._answered            = false
     this._questionStartedAt   = startedAt ?? Date.now()
@@ -390,6 +394,7 @@ export class GameController {
       isMultiple,
       correctAnswer,
       timeLimitMs,
+      thumbnail,
       isHost:   this.isHost,
       onAnswer: (answer) => this._handleAnswer(answer),
     })

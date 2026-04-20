@@ -74,13 +74,22 @@
       showError(msg)    { alert(msg) },
       showAnswerConfirmation() { /* host doesn't answer */ },
 
-      showQuestion({ questionIndex, text, options, isMultiple, timeLimitMs }) {
+      showQuestion({ questionIndex, text, options, isMultiple, timeLimitMs, thumbnail }) {
         document.getElementById('results-overlay').classList.add('hidden')
         document.getElementById('question-number').textContent = questionIndex + 1
         document.getElementById('question-text').textContent   = text
         document.getElementById('timer').textContent           = Math.ceil(timeLimitMs / 1000)
         document.getElementById('timer').classList.remove('text-berry-lipstick')
         document.getElementById('btn-next').disabled           = true
+
+        const imageWrap = document.getElementById('image-wrap')
+        const questionImage = document.getElementById('question-image')
+        if (thumbnail) {
+          questionImage.src = thumbnail
+          imageWrap.classList.remove('hidden')
+        } else {
+          imageWrap.classList.add('hidden')
+        }
 
         const grid = document.getElementById('answer-grid')
         grid.className = `grid gap-4 px-6 pb-10 flex-1 content-end ${isMultiple ? 'grid-cols-2' : 'grid-cols-2'}`

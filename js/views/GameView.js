@@ -51,28 +51,21 @@ export class GameView {
 
     players.forEach(player => {
       const isSelected = player.id === this.selectedId
-      const li = document.createElement('li')
+      const chip = document.createElement('div')
 
-      li.className = [
-        'flex items-center justify-between px-4 py-3 border rounded cursor-pointer select-none text-white',
+      chip.className = [
+        'px-3 py-1.5 border rounded cursor-pointer select-none text-white text-sm font-medium',
         isSelected
           ? 'bg-berry-lipstick border-berry-lipstick'
           : 'bg-royal-plum border-royal-plum hover:border-berry-lipstick'
       ].join(' ')
 
-      li.innerHTML = `
-        <span class="font-medium">${this._escape(player.name)}</span>
-        <span class="text-xs ${isSelected ? 'text-white/70' : 'text-blaze-orange'}">
-          ID ${player.id}
-        </span>
-      `
-
-      li.dataset.playerId = player.id
-      li.addEventListener('click', () => this._selectPlayer(player.id))
-      this.playerList.appendChild(li)
+      chip.textContent = this._escape(player.name)
+      chip.dataset.playerId = player.id
+      chip.addEventListener('click', () => this._selectPlayer(player.id))
+      this.playerList.appendChild(chip)
     })
 
-    // Kick button only active when someone is selected
     this.kickBtn.disabled = this.selectedId === null
   }
 
@@ -125,12 +118,10 @@ export class GameView {
   }
 
   _refreshSelection() {
-    // Just update classes without a full re-render
-    this.playerList.querySelectorAll('li').forEach((li, i) => {
-      const playerId = li.dataset.playerId
-      const isSelected = playerId === String(this.selectedId)
-      li.className = [
-        'flex items-center justify-between px-4 py-3 border rounded cursor-pointer select-none text-white',
+    this.playerList.querySelectorAll('div[data-player-id]').forEach(chip => {
+      const isSelected = chip.dataset.playerId === String(this.selectedId)
+      chip.className = [
+        'px-3 py-1.5 border rounded cursor-pointer select-none text-white text-sm font-medium',
         isSelected
           ? 'bg-berry-lipstick border-berry-lipstick'
           : 'bg-royal-plum border-royal-plum hover:border-berry-lipstick'
