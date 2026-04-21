@@ -40,6 +40,18 @@ export function renderTotalUsersPct(pct) {
   el.className = `text-xs mt-1 ${up ? 'text-jungle-green' : 'text-berry-lipstick'}`;
 }
 
+export function renderQuizzesThisWeek(count, pct) {
+  const el = document.getElementById('stat-quizzes-week');
+  if (el) el.textContent = count.toLocaleString();
+
+  const sub = document.getElementById('stat-quizzes-week-pct');
+  if (!sub) return;
+  if (pct === null) { sub.textContent = 'No data for last week'; sub.className = 'text-xs text-gray-400 mt-1'; return; }
+  const up = pct >= 0;
+  sub.textContent = `${up ? '↑' : '↓'} ${Math.abs(pct)}% this week`;
+  sub.className = `text-xs mt-1 ${up ? 'text-jungle-green' : 'text-berry-lipstick'}`;
+}
+
 export function renderGamesToday(count, pct) {
   const el = document.getElementById('stat-games-today');
   if (el) el.textContent = count.toLocaleString();

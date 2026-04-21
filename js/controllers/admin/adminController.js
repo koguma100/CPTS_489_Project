@@ -1,6 +1,6 @@
 import { fetchAllUsers, fetchRecentUsers, fetchNewUsersComparison, banUser, unbanUser, getCurrentUser } from '../../models/userModel.js';
-import { fetchAllGames, fetchGamesToday, fetchGamesThisWeek, fetchRecentGames, fetchRecentQuizzes } from '../../models/GameModel.js';
-import { renderTotalUsers, renderTotalUsersPct, renderGamesToday, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart, renderGames } from '../../views/admin/adminDashboardView.js';
+import { fetchAllGames, fetchGamesToday, fetchGamesThisWeek, fetchQuizzesComparison, fetchRecentGames, fetchRecentQuizzes } from '../../models/GameModel.js';
+import { renderTotalUsers, renderTotalUsersPct, renderGamesToday, renderQuizzesThisWeek, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart, renderGames } from '../../views/admin/adminDashboardView.js';
 
 let allUsers = [];
 let activeFilter = 'all';
@@ -34,12 +34,13 @@ function getFilteredList() {
 }
 
 export async function initAdminDashboard() {
-  const [usersResult, recentResult, gamesResult, gamesTodayResult, newUsersResult, recentGamesResult, recentQuizzesResult, adminUser] = await Promise.allSettled([
+  const [usersResult, recentResult, gamesResult, gamesTodayResult, newUsersResult, quizzesResult, recentGamesResult, recentQuizzesResult, adminUser] = await Promise.allSettled([
     fetchAllUsers(),
     fetchRecentUsers(15),
     fetchGamesThisWeek(),
     fetchGamesToday(),
     fetchNewUsersComparison(),
+    fetchQuizzesComparison(),
     fetchRecentGames(15),
     fetchRecentQuizzes(15),
     getCurrentUser(),
@@ -67,6 +68,13 @@ export async function initAdminDashboard() {
     let pct = null;
     if (lastWeek > 0) pct = Math.round(((thisWeek - lastWeek) / lastWeek) * 100);
     renderTotalUsersPct(pct);
+  }
+
+  if (quizzesResult.status === 'fulfilled') {
+    const { thisWeek, lastWeek } = quizzesResult.value;
+    let pct = null;
+    if (lastWeek > 0) pct = Math.round(((thisWeek - lastWeek) / lastWeek) * 100);
+    renderQuizzesThisWeek(thisWeek, pct);
   }
 
   const recentUsers = recentResult.status === 'fulfilled'

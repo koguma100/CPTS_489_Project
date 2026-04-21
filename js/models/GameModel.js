@@ -349,6 +349,26 @@ export async function fetchRecentGames(limit = 3) {
   return data;
 }
 
+export async function fetchQuizzesComparison() {
+  const now = new Date();
+  const thisWeekStart = new Date(now);
+  thisWeekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  thisWeekStart.setHours(0, 0, 0, 0);
+
+  const lastWeekStart = new Date(thisWeekStart);
+  lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+
+  const [thisWeekRes, lastWeekRes] = await Promise.all([
+    supabase.from('quizzes').select('id', { count: 'exact', head: true }).gte('created_at', thisWeekStart.toISOString()),
+    supabase.from('quizzes').select('id', { count: 'exact', head: true }).gte('created_at', lastWeekStart.toISOString()).lt('created_at', thisWeekStart.toISOString()),
+  ]);
+
+  if (thisWeekRes.error) throw new Error(thisWeekRes.error.message);
+  if (lastWeekRes.error) throw new Error(lastWeekRes.error.message);
+
+  return { thisWeek: thisWeekRes.count ?? 0, lastWeek: lastWeekRes.count ?? 0 };
+}
+
 export async function fetchRecentQuizzes(limit = 3) {
   const { data, error } = await supabase
     .from('quizzes')
