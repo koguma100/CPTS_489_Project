@@ -27,7 +27,7 @@ if (page === 'join') {
 
     try {
       await controller.joinGame(pin, playerName)
-      window.location.href = '/pages/game/playerLobby.html'
+      window.location.href = '/game/lobby'
 
     } catch (err) {
       const message = err.message.includes('No rows')
@@ -68,7 +68,7 @@ if (page === 'lobby-host') {
     if (savedGameId && savedGamePin && savedQuizId) {
       await controller.reconnectGame(hostId, savedGameId, savedGamePin, savedQuizId)
     } else {
-      window.location.href = '/pages/index.html'
+      window.location.href = '/'
     }
   }
 }

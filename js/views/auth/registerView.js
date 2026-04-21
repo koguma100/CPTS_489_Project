@@ -19,7 +19,7 @@ export function init() {
     try {
       const data = await handleRegister(email, username, password, confirm);
       if (data.session) {
-        window.location.href = 'userDashboard.html';
+        window.location.href = '/dashboard';
       } else {
         // Email confirmation required
         form.innerHTML = `

@@ -12,7 +12,7 @@ export async function init() {
     const q = document.getElementById('user-search')?.value.toLowerCase() ?? '';
     applyFilter(q);
   };
-  window.goToUser       = (id) => { window.location.href = `viewUser.html?id=${id}`; };
+  window.goToUser       = (id) => { window.location.href = `/admin/user?id=${id}`; };
   window.doBanUser      = async (id) => {
     try { await doBanUser(id); } catch (err) { alert('Ban failed: ' + err.message); }
   };

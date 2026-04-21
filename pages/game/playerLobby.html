@@ -49,11 +49,11 @@
 
             showQuestion(data) {
                 sessionStorage.setItem('currentQuestion', JSON.stringify(data))
-                window.location.href = '/pages/game/player.html'
+                window.location.href = '/game/play'
             },
 
             showGameOver() {
-                window.location.href = '/pages/game/playerLobby.html'
+                window.location.href = '/game/lobby'
             },
         }
 

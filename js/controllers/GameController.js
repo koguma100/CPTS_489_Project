@@ -177,7 +177,7 @@ export class GameController {
     const gameId     = sessionStorage.getItem('gameId')
 
     if (!pin || !playerName || !gameId) {
-      window.location.href = 'joinGame.html'
+      window.location.href = '/join'
       return
     }
 
@@ -291,7 +291,7 @@ export class GameController {
 
     this.currentQuestionIndex = 0
     await this.model.advanceQuestion(this.game.id, 0)
-    window.location.href = '/pages/game/view.html'
+    window.location.href = '/game/view'
   }
 
   async _startNextQuestion() {
