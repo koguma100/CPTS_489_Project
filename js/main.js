@@ -51,15 +51,25 @@ if (page === 'lobby-host') {
   const { data: { user } } = await supabase.auth.getUser()
   const hostId = user?.id ?? crypto.randomUUID()
 
-  const savedGameId  = sessionStorage.getItem('hostGameId')
-  const savedGamePin = sessionStorage.getItem('hostGamePin')
-  const savedQuizId  = sessionStorage.getItem('hostQuizId')
+  const selectedQuizId = sessionStorage.getItem('selectedQuizId')
 
-  if (savedGameId && savedGamePin && savedQuizId) {
-    await controller.reconnectGame(hostId, savedGameId, savedGamePin, savedQuizId)
+  if (selectedQuizId) {
+    // User picked a new quiz — clear any stale game session and start fresh
+    sessionStorage.removeItem('selectedQuizId')
+    sessionStorage.removeItem('hostGameId')
+    sessionStorage.removeItem('hostGamePin')
+    sessionStorage.removeItem('hostQuizId')
+    await controller.createGame(hostId, selectedQuizId)
   } else {
-    const quizId = sessionStorage.getItem('selectedQuizId') ?? '0f2cbb4d-b1a0-46cc-8295-ab62d6a3db95'
-    await controller.createGame(hostId, quizId)
+    const savedGameId  = sessionStorage.getItem('hostGameId')
+    const savedGamePin = sessionStorage.getItem('hostGamePin')
+    const savedQuizId  = sessionStorage.getItem('hostQuizId')
+
+    if (savedGameId && savedGamePin && savedQuizId) {
+      await controller.reconnectGame(hostId, savedGameId, savedGamePin, savedQuizId)
+    } else {
+      window.location.href = '/pages/index.html'
+    }
   }
 }
 

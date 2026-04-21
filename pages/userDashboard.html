@@ -7,9 +7,9 @@
   <title>Quiz Dashboard</title>
 </head>
 
-<body class="bg-gray-100 min-h-screen">
+<body data-page="dashboard" class="bg-gray-100 min-h-screen">
 
-  <!-- Logged-in Navbar -->
+  <!-- Navbar -->
   <navbar-component></navbar-component>
   <script type="module" src="./components/navbar.js"></script>
 
@@ -17,26 +17,81 @@
 
     <!-- Greeting -->
     <section class="max-w-5xl mx-auto px-2">
-      <h1 id="dashboard-greeting" class="text-3xl font-extrabold text-gray-800">Welcome back!</h1>
+      <h1 id="dashboard-greeting" class="text-3xl font-extrabold text-gray-800">
+        Welcome back!
+      </h1>
       <p class="text-gray-500 mt-1">Here's what's waiting for you today.</p>
     </section>
 
-    <!-- Your Quizzes -->
+    <!-- Search + Category Filter -->
+    <section class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex flex-col md:flex-row md:flex-wrap gap-4 md:items-end">
+        <div class="flex-1 min-w-[260px]">
+          <label for="quizSearch" class="block text-sm font-medium text-gray-700 mb-1">
+            Search quizzes
+          </label>
+          <input
+            id="quizSearch"
+            type="text"
+            placeholder="Search by title or description..."
+            class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
+        <div class="w-full md:w-[220px]">
+          <label for="categoryFilter" class="block text-sm font-medium text-gray-700 mb-1">
+            Category
+          </label>
+          <select
+            id="categoryFilter"
+            class="w-full rounded-lg border border-gray-300 px-4 pr-10 py-2"
+          >
+            <option value="">All Categories</option>
+            <option value="Math">Math</option>
+            <option value="Science">Science</option>
+            <option value="History">History</option>
+            <option value="Coding">Coding</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="mt-4 flex justify-end">
+        <button
+          id="clearFiltersBtn"
+          class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </section>
+
+    <!-- Your Quizzes -->
     <section class="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg p-6">
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold">Your Quizzes</h2>
         <div class="flex gap-3">
-          <button id="prevBtn1" class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90">
-            Previous
+          <button
+            id="prevBtn1"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-gray-800 text-white font-bold text-xl border border-gray-800 hover:opacity-90"
+            aria-label="Previous quizzes"
+          >
+            &lt;
           </button>
-          <button id="nextBtn1" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:opacity-90">
-            Next
+          <button
+            id="nextBtn1"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-gray-800 text-white font-bold text-xl border border-gray-800 hover:opacity-90"
+            aria-label="Next quizzes"
+          >
+            &gt;
           </button>
         </div>
       </div>
 
-      <div id="quizTrack1" class="flex gap-4 overflow-hidden"></div>
+      <div class="overflow-hidden">
+        <div id="quizTrack1" class="flex gap-4 transition-transform duration-300 ease-in-out"></div>
+      </div>
     </section>
 
     <!-- Past Quizzes -->
@@ -44,16 +99,28 @@
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold">Past Quizzes</h2>
         <div class="flex gap-3">
-          <button id="prevBtn2" class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90">
-            Previous
+          <button
+            id="prevBtn2"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-gray-800 text-white font-bold text-xl border border-gray-800 hover:opacity-90"
+            aria-label="Previous quizzes"
+          >
+            &lt;
           </button>
-          <button id="nextBtn2" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:opacity-90">
-            Next
+          <button
+            id="nextBtn2"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-gray-800 text-white font-bold text-xl border border-gray-800 hover:opacity-90"
+            aria-label="Next quizzes"
+          >
+            &gt;
           </button>
         </div>
       </div>
 
-      <div id="quizTrack2" class="flex gap-4 overflow-hidden"></div>
+      <div class="overflow-hidden">
+        <div id="quizTrack2" class="flex gap-4 transition-transform duration-300 ease-in-out"></div>
+      </div>
     </section>
 
     <!-- Recommended Quizzes -->
@@ -61,121 +128,291 @@
       <div class="flex items-center justify-between mb-6">
         <h2 class="text-2xl font-bold">Recommended Quizzes</h2>
         <div class="flex gap-3">
-          <button id="prevBtn3" class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90">
-            Previous
+          <button
+            id="prevBtn3"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-gray-800 text-white font-bold text-xl border border-gray-800 hover:opacity-90"
+            aria-label="Previous quizzes"
+          >
+            &lt;
           </button>
-          <button id="nextBtn3" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:opacity-90">
-            Next
+          <button
+            id="nextBtn3"
+            type="button"
+            class="px-4 py-2 rounded-lg bg-gray-800 text-white font-bold text-xl border border-gray-800 hover:opacity-90"
+            aria-label="Next quizzes"
+          >
+            &gt;
           </button>
         </div>
       </div>
 
-      <div id="quizTrack3" class="flex gap-4 overflow-hidden"></div>
+      <div class="overflow-hidden">
+        <div id="quizTrack3" class="flex gap-4 transition-transform duration-300 ease-in-out"></div>
+      </div>
     </section>
 
   </main>
 
-  <script type="module">
-    import { init } from '../js/views/user/userDashboardView.js';
+<script type="module">
+  import { init } from '../js/views/user/userDashboardView.js';
+
+  try {
     await init();
-  </script>
+  } catch (err) {
+    console.error('Dashboard init failed:', err);
+  }
+</script>
 
-  <script>
+<script type="module">
+  import { supabase } from '../js/supabase/supabase.js';
 
-    const quizzes = [
-      {
-        title: "Math Quiz",
-        image: "https://via.placeholder.com/220x140?text=Math",
-        description: "Practice algebra and geometry.",
-        link: "mathQuiz.html"
-      },
-      {
-        title: "Science Quiz",
-        image: "https://via.placeholder.com/220x140?text=Science",
-        description: "Test biology and chemistry basics.",
-        link: "scienceQuiz.html"
-      },
-      {
-        title: "History Quiz",
-        image: "https://via.placeholder.com/220x140?text=History",
-        description: "Explore major world events.",
-        link: "historyQuiz.html"
-      },
-      {
-        title: "Sports Quiz",
-        image: "https://via.placeholder.com/220x140?text=Sports",
-        description: "Challenge your sports knowledge.",
-        link: "sportsQuiz.html"
-      },
-      {
-        title: "Coding Quiz",
-        image: "https://via.placeholder.com/220x140?text=Coding",
-        description: "HTML, CSS, JavaScript, and more.",
-        link: "codingQuiz.html"
-      }
-    ];
+  const page = document.body.dataset.page;
 
-    function setupCarousel(trackId, prevBtnId, nextBtnId, quizData) {
+  if (page === 'dashboard') {
+    const quizTrack1 = document.getElementById('quizTrack1');
+    const quizTrack2 = document.getElementById('quizTrack2');
+    const quizTrack3 = document.getElementById('quizTrack3');
 
-      const quizTrack = document.getElementById(trackId);
-      const prevBtn = document.getElementById(prevBtnId);
-      const nextBtn = document.getElementById(nextBtnId);
+    const quizSearch = document.getElementById('quizSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
 
-      let startIndex = 0;
-      const visibleCount = 3;
+    const prevBtn1 = document.getElementById('prevBtn1');
+    const nextBtn1 = document.getElementById('nextBtn1');
+    const prevBtn2 = document.getElementById('prevBtn2');
+    const nextBtn2 = document.getElementById('nextBtn2');
+    const prevBtn3 = document.getElementById('prevBtn3');
+    const nextBtn3 = document.getElementById('nextBtn3');
 
-      function renderQuizzes() {
+    const carouselState = {
+      quizTrack1: 0,
+      quizTrack2: 0,
+      quizTrack3: 0
+    };
 
-        quizTrack.innerHTML = "";
+    const visibleCount = 3;
 
-        const visibleQuizzes = [];
+    function createQuizCard(quiz, fallbackHref = '/pages/game/hostLobby.html') {
+      const card = document.createElement('div');
+      card.className =
+        'min-w-[calc((100%-2rem)/3)] max-w-[calc((100%-2rem)/3)] bg-gray-50 rounded-xl shadow p-4 hover:shadow-lg transition flex-shrink-0';
 
-        for (let i = 0; i < visibleCount; i++) {
-          const index = (startIndex + i) % quizData.length;
-          visibleQuizzes.push(quizData[index]);
-        }
+      const href = quiz.id ? `${fallbackHref}?quizId=${quiz.id}` : '#';
 
-        visibleQuizzes.forEach((quiz) => {
+      card.innerHTML = `
+        <a href="${href}">
+          <img
+            src="${quiz.thumbnail || quiz.image_url || 'https://via.placeholder.com/220x140?text=Quiz'}"
+            alt="${quiz.title || 'Quiz'}"
+            class="w-full h-36 object-cover rounded-lg mb-3 hover:brightness-110 transition cursor-pointer"
+          >
+        </a>
 
-          const card = document.createElement("div");
+        <h3 class="text-lg font-semibold mb-2">${quiz.title || 'Untitled Quiz'}</h3>
 
-          card.className =
-            "flex-1 min-w-0 bg-gray-50 rounded-xl shadow p-4 hover:shadow-lg transition";
+        <p class="text-sm text-gray-600 mb-2">
+          ${quiz.description || 'No description available.'}
+        </p>
 
-          card.innerHTML = `
-            <a href="${quiz.link}">
-              <img src="${quiz.image}" 
-                   alt="${quiz.title}" 
-                   class="w-full h-36 object-cover rounded-lg mb-3 hover:brightness-110 transition cursor-pointer">
-            </a>
+        <div class="flex flex-wrap gap-2 text-xs">
+          ${quiz.category ? `<span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-full">${quiz.category}</span>` : ''}
+          ${typeof quiz.times_played === 'number' ? `<span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full">${quiz.times_played} plays</span>` : ''}
+        </div>
+      `;
 
-            <h3 class="text-lg font-semibold mb-2">${quiz.title}</h3>
-
-            <p class="text-sm text-gray-600">${quiz.description}</p>
-          `;
-
-          quizTrack.appendChild(card);
-        });
-      }
-
-      prevBtn.addEventListener("click", () => {
-        startIndex = (startIndex - 1 + quizData.length) % quizData.length;
-        renderQuizzes();
-      });
-
-      nextBtn.addEventListener("click", () => {
-        startIndex = (startIndex + 1) % quizData.length;
-        renderQuizzes();
-      });
-
-      renderQuizzes();
+      return card;
     }
 
-    setupCarousel("quizTrack1", "prevBtn1", "nextBtn1", quizzes);
-    setupCarousel("quizTrack2", "prevBtn2", "nextBtn2", quizzes);
-    setupCarousel("quizTrack3", "prevBtn3", "nextBtn3", quizzes);
+    function renderCarousel(track, quizData, emptyMessage) {
+      track.innerHTML = '';
 
-  </script>
+      if (!quizData.length) {
+        track.innerHTML = `
+          <div class="w-full text-center text-gray-500 py-8">
+            ${emptyMessage}
+          </div>
+        `;
+        track.style.transform = 'translateX(0)';
+        return;
+      }
+
+      quizData.forEach((quiz) => {
+        track.appendChild(createQuizCard(quiz));
+      });
+
+      carouselState[track.id] = 0;
+      updateCarousel(track);
+    }
+
+    function renderError(track, message) {
+      track.innerHTML = `
+        <div class="w-full text-center text-red-500 py-8">
+          ${message}
+        </div>
+      `;
+      track.style.transform = 'translateX(0)';
+    }
+
+    function updateCarousel(track) {
+      const cards = track.querySelectorAll('.flex-shrink-0');
+
+      if (!cards.length) {
+        track.style.transform = 'translateX(0)';
+        return;
+      }
+
+      const cardWidth = cards[0].offsetWidth;
+      const gap = 16;
+      const offset = carouselState[track.id] * (cardWidth + gap);
+
+      track.style.transform = `translateX(-${offset}px)`;
+    }
+
+    function setupCarouselButtons(track, prevBtn, nextBtn) {
+      prevBtn.addEventListener('click', () => {
+        carouselState[track.id] = Math.max(0, carouselState[track.id] - 1);
+        updateCarousel(track);
+      });
+
+      nextBtn.addEventListener('click', () => {
+        const cards = track.querySelectorAll('.flex-shrink-0');
+        const maxIndex = Math.max(0, cards.length - visibleCount);
+
+        carouselState[track.id] = Math.min(maxIndex, carouselState[track.id] + 1);
+        updateCarousel(track);
+      });
+    }
+
+    setupCarouselButtons(quizTrack1, prevBtn1, nextBtn1);
+    setupCarouselButtons(quizTrack2, prevBtn2, nextBtn2);
+    setupCarouselButtons(quizTrack3, prevBtn3, nextBtn3);
+
+    async function fetchQuizzes() {
+      let query = supabase
+        .from('quizzes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const searchTerm = quizSearch.value.trim().replace(/[%_,]/g, '');
+      const category = categoryFilter.value;
+
+      if (searchTerm) {
+        query = query.or(
+          `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`
+        );
+      }
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Error fetching quizzes:', error);
+        renderError(quizTrack1, `Could not load quizzes: ${error.message}`);
+        return;
+      }
+
+      renderCarousel(quizTrack1, data || [], 'No quizzes found.');
+    }
+
+    async function fetchPastQuizzes(hostId) {
+      const { data: games, error: gamesError } = await supabase
+        .from('games')
+        .select('quiz, created_at')
+        .eq('host', hostId)
+        .order('created_at', { ascending: false });
+
+      if (gamesError) {
+        console.error('Error fetching past games:', gamesError);
+        renderError(quizTrack2, `Could not load past quizzes: ${gamesError.message}`);
+        return;
+      }
+
+      const uniqueQuizIds = [...new Set(
+        (games || [])
+          .map((game) => game.quiz)
+          .filter(Boolean)
+      )];
+
+      if (!uniqueQuizIds.length) {
+        renderCarousel(quizTrack2, [], 'No past quizzes found.');
+        return;
+      }
+
+      const { data: quizzes, error: quizzesError } = await supabase
+        .from('quizzes')
+        .select('*')
+        .in('id', uniqueQuizIds);
+
+      if (quizzesError) {
+        console.error('Error fetching past quiz details:', quizzesError);
+        renderError(quizTrack2, `Could not load past quizzes: ${quizzesError.message}`);
+        return;
+      }
+
+      const quizMap = new Map((quizzes || []).map((q) => [q.id, q]));
+      const orderedUniqueQuizzes = uniqueQuizIds
+        .map((id) => quizMap.get(id))
+        .filter(Boolean);
+
+      renderCarousel(quizTrack2, orderedUniqueQuizzes, 'No past quizzes found.');
+    }
+
+    async function fetchRecommendedQuizzes() {
+      const { data, error } = await supabase
+        .from('quizzes')
+        .select('*')
+        .order('times_played', { ascending: false })
+        .limit(10);
+
+      if (error) {
+        console.error('Error fetching recommended quizzes:', error);
+        renderError(quizTrack3, `Could not load recommended quizzes: ${error.message}`);
+        return;
+      }
+
+      renderCarousel(quizTrack3, data || [], 'No recommended quizzes found.');
+    }
+
+    let debounceTimer;
+
+    function debounceFetch() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fetchQuizzes, 300);
+    }
+
+    quizSearch.addEventListener('input', debounceFetch);
+    categoryFilter.addEventListener('change', fetchQuizzes);
+
+    clearFiltersBtn.addEventListener('click', () => {
+      quizSearch.value = '';
+      categoryFilter.value = '';
+      fetchQuizzes();
+    });
+
+    window.addEventListener('resize', () => {
+      updateCarousel(quizTrack1);
+      updateCarousel(quizTrack2);
+      updateCarousel(quizTrack3);
+    });
+
+    await fetchQuizzes();
+
+    const { data: { user } } = await supabase.auth.getUser();
+    const hostId = user?.id;
+
+    if (hostId) {
+      await fetchPastQuizzes(hostId);
+    } else {
+      renderCarousel(quizTrack2, [], 'No past quizzes found.');
+    }
+
+    await fetchRecommendedQuizzes();
+  }
+</script>
 
 </body>
 </html>
