@@ -1,3 +1,5 @@
+import { getSession } from '../../models/authModel.js';
+
 export function getDiscoverQuizzesElements() {
   return {
     quizList: document.getElementById('quiz-list'),
@@ -56,9 +58,14 @@ export function renderQuizzes(quizList, quizzes) {
     `;
 
     const playBtn = card.querySelector('.play-quiz-btn');
-    playBtn.addEventListener('click', () => {
+    playBtn.addEventListener('click', async () => {
+      const session = await getSession();
+      if (!session) {
+        showAuthPrompt(card);
+        return;
+      }
       sessionStorage.setItem('selectedQuizId', quiz.id);
-      window.location.href = '/pages/game';
+      window.location.href = '/game';
     });
 
     quizList.appendChild(card);
@@ -71,4 +78,16 @@ export function renderQuizError(quizList, message) {
       ${message}
     </div>
   `;
+}
+
+function showAuthPrompt(card) {
+  const existing = card.querySelector('.auth-prompt');
+  if (existing) return;
+
+  const prompt = document.createElement('div');
+  prompt.className = 'auth-prompt mt-3 text-sm text-center bg-berry-lipstick/10 text-berry-lipstick rounded-lg px-3 py-2';
+  prompt.innerHTML = `You need to <a href="/login" class="font-semibold underline">log in</a> or <a href="/register" class="font-semibold underline">sign up</a> to play.`;
+  card.querySelector('.p-4').appendChild(prompt);
+
+  setTimeout(() => prompt.remove(), 4000);
 }
