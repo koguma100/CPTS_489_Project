@@ -1,60 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Project</title>
-    
-    <!-- Link to the Tailwind CSS output file -->
-    <link href="../public/output.css" rel="stylesheet">
-    
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discover Quizzes</title>
+  <link href="../public/output.css" rel="stylesheet" />
 </head>
 
+<body class="bg-gray-100 min-h-screen">
+  <navbar-component></navbar-component>
+  <script type="module" src="./components/navbar.js"></script>
 
+  <main class="px-6 py-8">
+    <section class="max-w-7xl mx-auto">
+      <div class="mb-8">
+        <h1 class="text-4xl font-extrabold text-gray-800">Discover Quizzes</h1>
+        <p class="text-gray-500 mt-2">Play quizzes made by the community</p>
+      </div>
 
-<body>
-    <!-- This is a component for the navbar-->
-    <Navbar-component></Navbar-component>
-    <script type="module" src="./components/navbar.js"></script>
-    
-    <main class="px-6 py-8">
-        <section class="max-w-7xl mx-auto">
-            <div class="mb-8">
-                <h1 class="text-4xl font-extrabold text-gray-800">Discover Quizzes</h1>
-                <p class="text-gray-500 mt-2">Play quizzes made by the community</p>
+      <!-- Search + Category Filter -->
+      <section class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <div class="flex flex-col md:flex-row md:flex-wrap gap-4 md:items-end">
+          <div class="flex-1 min-w-[260px]">
+            <label for="quizSearch" class="block text-sm font-medium text-gray-700 mb-1">
+              Search quizzes
+            </label>
+            <input
+              id="quizSearch"
+              type="text"
+              placeholder="Search by title or description..."
+              class="w-full rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-berry-lipstick"
+            />
+          </div>
+
+          <div class="w-full md:w-[220px]">
+            <label for="categoryFilter" class="block text-sm font-medium text-gray-700 mb-1">
+              Category
+            </label>
+            <select
+              id="categoryFilter"
+              class="w-full rounded-lg border border-gray-300 px-4 pr-10 py-2 focus:outline-none focus:ring-2 focus:ring-berry-lipstick"
+            >
+              <option value="">All Categories</option>
+              <option value="History">History</option>
+              <option value="Science">Science</option>
+              <option value="Cybersecurity">Cybersecurity</option>
+              <option value="Gaming">Gaming</option>
+              <option value="General Knowledge">General Knowledge</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="mt-4 flex justify-end">
+          <button
+            id="clearFiltersBtn"
+            class="px-4 py-2 rounded-lg bg-gray-800 text-white hover:opacity-90"
+          >
+            Clear Filters
+          </button>
+        </div>
+      </section>
+
+      <!-- Quiz cards -->
+      <div id="quiz-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { supabase } from '../js/supabase/supabase.js';
+
+    const quizList = document.getElementById('quiz-list');
+    const quizSearch = document.getElementById('quizSearch');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+
+    async function fetchQuizzes() {
+      let query = supabase
+        .from('quizzes')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      const searchTerm = quizSearch.value.trim().replace(/[%_,]/g, '');
+      const category = categoryFilter.value;
+
+      if (searchTerm) {
+        query = query.or(
+          `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`
+        );
+      }
+
+      if (category) {
+        query = query.eq('category', category);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('Supabase error:', error);
+        quizList.innerHTML = `
+          <div class="col-span-full text-center text-red-500 py-8">
+            Could not load quizzes: ${error.message}
+          </div>
+        `;
+        return;
+      }
+
+      renderQuizzes(data || []);
+    }
+
+    function renderQuizzes(quizzes) {
+      quizList.innerHTML = '';
+
+      if (!quizzes.length) {
+        quizList.innerHTML = `
+          <div class="col-span-full text-center text-gray-500 py-8">
+            No quizzes found.
+          </div>
+        `;
+        return;
+      }
+
+      quizzes.forEach((quiz) => {
+        const card = document.createElement('div');
+        card.className = 'bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition';
+
+        card.innerHTML = `
+          <img
+            src="${quiz.thumbnail || 'https://via.placeholder.com/400x220?text=Quiz'}"
+            alt="${quiz.title || 'Quiz'}"
+            class="w-full h-44 object-cover"
+          />
+
+          <div class="p-4">
+            <h3 class="text-lg font-bold text-gray-800 mb-2">
+              ${quiz.title || 'Untitled Quiz'}
+            </h3>
+
+            <p class="text-sm text-gray-600 mb-3">
+              ${quiz.description || 'No description available.'}
+            </p>
+
+            <div class="flex flex-wrap gap-2 mb-4">
+              ${quiz.category ? `
+                <span class="text-xs bg-berry-lipstick/10 text-berry-lipstick px-2 py-1 rounded-full">
+                  ${quiz.category}
+                </span>
+              ` : ''}
             </div>
-            <!-- Search and Filter -->
-            <div class="mb-8 flex flex-col md:flex-row gap-4 md:items-center md:justify-between">
-                <div class="w-full md:w-2/3">
-                    <input
-                        type="text"
-                        placeholder="Search quizzes..."
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-berry-lipstick"
-                    />
-                </div>
 
-                <div class="w-full md:w-1/3">
-                    <select
-                        class="w-1/2 px-4 py-3 rounded-xl border border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-2 focus:ring-berry-lipstick"
-                    >
-                        <option value="">Filter by category</option>
-                        <option value="history">History</option>
-                        <option value="science">Science</option>
-                        <option value="cybersecurity">Cybersecurity</option>
-                        <option value="gaming">Gaming</option>
-                        <option value="general">General Knowledge</option>
-                    </select>
-                </div>
-            </div>
-            <!-- Quiz list -->
-            <div id="quiz-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                <!-- Cards will be inserted here -->
-            </div>
-        </section>
+            <a
+              href="/pages/game/joinGame.html?quizId=${quiz.id}"
+              class="inline-block w-full text-center px-4 py-2 rounded-lg bg-berry-lipstick text-white font-semibold hover:opacity-90 transition"
+            >
+              Play Quiz
+            </a>
+          </div>
+        `;
 
-    </main>
+        quizList.appendChild(card);
+      });
+    }
 
-    <script src="./components/postings.js"></script>
+    let debounceTimer;
 
+    function debounceFetch() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fetchQuizzes, 300);
+    }
+
+    quizSearch.addEventListener('input', debounceFetch);
+    categoryFilter.addEventListener('change', fetchQuizzes);
+
+    clearFiltersBtn.addEventListener('click', () => {
+      quizSearch.value = '';
+      categoryFilter.value = '';
+      fetchQuizzes();
+    });
+
+    await fetchQuizzes();
+  </script>
 </body>
 </html>
