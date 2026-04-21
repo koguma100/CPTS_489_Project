@@ -1,5 +1,5 @@
 import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../../models/userModel.js';
-import { fetchGamesThisWeek } from '../../models/GameModel.js';
+import { fetchGamesThisWeek, fetchRecentGames, fetchRecentQuizzes } from '../../models/GameModel.js';
 import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart } from '../../views/admin/adminDashboardView.js';
 
 let allUsers = [];
@@ -34,10 +34,12 @@ function getFilteredList() {
 }
 
 export async function initAdminDashboard() {
-  const [usersResult, recentResult, gamesResult, adminUser] = await Promise.allSettled([
+  const [usersResult, recentResult, gamesResult, recentGamesResult, recentQuizzesResult, adminUser] = await Promise.allSettled([
     fetchAllUsers(),
-    fetchRecentUsers(3),
+    fetchRecentUsers(15),
     fetchGamesThisWeek(),
+    fetchRecentGames(15),
+    fetchRecentQuizzes(15),
     getCurrentUser(),
   ]);
 
@@ -58,13 +60,33 @@ export async function initAdminDashboard() {
     console.error('Failed to load users:', usersResult.reason?.message);
   }
 
-  if (recentResult.status === 'fulfilled') {
-    const recentUsers = recentResult.value.map(u => ({
-      username: u.username ? `@${u.username}` : '—',
-      time: formatRelative(u.created_at),
-    }));
-    renderRecentActivity(recentUsers);
-  }
+  const recentUsers = recentResult.status === 'fulfilled'
+    ? recentResult.value.map(u => ({
+        username: u.username ? `@${u.username}` : '—',
+        time: formatRelative(u.created_at),
+        _ts: new Date(u.created_at).getTime(),
+      }))
+    : [];
+
+  const recentGames = recentGamesResult.status === 'fulfilled'
+    ? recentGamesResult.value.map(g => ({
+        pin: g.pin,
+        quizTitle: g.quizzes?.title ?? 'Unknown Quiz',
+        phase: g.phase,
+        time: formatRelative(g.created_at),
+        _ts: new Date(g.created_at).getTime(),
+      }))
+    : [];
+
+  const recentQuizzes = recentQuizzesResult.status === 'fulfilled'
+    ? recentQuizzesResult.value.map(q => ({
+        title: q.title,
+        time: formatRelative(q.created_at),
+        _ts: new Date(q.created_at).getTime(),
+      }))
+    : [];
+
+  renderRecentActivity(recentUsers, recentGames, recentQuizzes);
 
   const dayCounts = [0, 0, 0, 0, 0, 0, 0];
   if (gamesResult.status === 'fulfilled') {

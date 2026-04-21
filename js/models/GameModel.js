@@ -328,6 +328,28 @@ export class GameModel {
 }
 
 // ─── Admin Functions ─────────────────────────────────────────────────────
+export async function fetchRecentGames(limit = 3) {
+  const { data, error } = await supabase
+    .from('games')
+    .select('id, created_at, pin, phase, quizzes(title)')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function fetchRecentQuizzes(limit = 3) {
+  const { data, error } = await supabase
+    .from('quizzes')
+    .select('id, created_at, title')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function fetchGamesThisWeek() {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 = Sunday
