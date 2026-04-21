@@ -4,6 +4,7 @@ export function init() {
   const form    = document.getElementById('registerForm');
   const errorEl = document.getElementById('register-error');
   const btn     = document.getElementById('register-btn');
+  const title   = document.getElementById('register-title');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -19,9 +20,11 @@ export function init() {
     try {
       const data = await handleRegister(email, username, password, confirm);
       if (data.session) {
+        title.textContent = 'Account Created!';
         window.location.href = 'userDashboard.html';
       } else {
         // Email confirmation required
+        title.textContent = 'Account Created!';
         form.innerHTML = `
           <div class="text-center py-4">
             <p class="text-jungle-green font-semibold text-lg mb-2">Check your email!</p>

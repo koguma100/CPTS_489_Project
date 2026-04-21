@@ -1,5 +1,5 @@
 import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../../models/userModel.js';
-import { fetchGamesThisWeek } from '../../models/gameModel.js';
+import { fetchGamesThisWeek } from '../../models/GameModel.js';
 import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart } from '../../views/admin/adminDashboardView.js';
 
 let allUsers = [];
