@@ -148,12 +148,12 @@
               ` : ''}
             </div>
 
-            <a
-              href="/pages/game/joinGame.html?quizId=${quiz.id}"
+            <button
+              onclick="sessionStorage.setItem('selectedQuizId','${quiz.id}');window.location.href='/pages/game';"
               class="inline-block w-full text-center px-4 py-2 rounded-lg bg-berry-lipstick text-white font-semibold hover:opacity-90 transition"
             >
               Play Quiz
-            </a>
+            </button>
           </div>
         `;
 
