@@ -360,6 +360,24 @@ export async function fetchRecentQuizzes(limit = 3) {
   return data;
 }
 
+export async function fetchGamesToday() {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+  const [todayRes, yesterdayRes] = await Promise.all([
+    supabase.from('games').select('id', { count: 'exact', head: true }).gte('created_at', todayStart.toISOString()),
+    supabase.from('games').select('id', { count: 'exact', head: true }).gte('created_at', yesterdayStart.toISOString()).lt('created_at', todayStart.toISOString()),
+  ]);
+
+  if (todayRes.error) throw new Error(todayRes.error.message);
+  if (yesterdayRes.error) throw new Error(yesterdayRes.error.message);
+
+  return { today: todayRes.count ?? 0, yesterday: yesterdayRes.count ?? 0 };
+}
+
 export async function fetchGamesThisWeek() {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 = Sunday

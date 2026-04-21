@@ -1,6 +1,6 @@
-import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../../models/userModel.js';
-import { fetchAllGames, fetchGamesThisWeek, fetchRecentGames, fetchRecentQuizzes } from '../../models/GameModel.js';
-import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart, renderGames } from '../../views/admin/adminDashboardView.js';
+import { fetchAllUsers, fetchRecentUsers, fetchNewUsersComparison, banUser, unbanUser, getCurrentUser } from '../../models/userModel.js';
+import { fetchAllGames, fetchGamesToday, fetchGamesThisWeek, fetchRecentGames, fetchRecentQuizzes } from '../../models/GameModel.js';
+import { renderTotalUsers, renderTotalUsersPct, renderGamesToday, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart, renderGames } from '../../views/admin/adminDashboardView.js';
 
 let allUsers = [];
 let activeFilter = 'all';
@@ -34,10 +34,12 @@ function getFilteredList() {
 }
 
 export async function initAdminDashboard() {
-  const [usersResult, recentResult, gamesResult, recentGamesResult, recentQuizzesResult, adminUser] = await Promise.allSettled([
+  const [usersResult, recentResult, gamesResult, gamesTodayResult, newUsersResult, recentGamesResult, recentQuizzesResult, adminUser] = await Promise.allSettled([
     fetchAllUsers(),
     fetchRecentUsers(15),
     fetchGamesThisWeek(),
+    fetchGamesToday(),
+    fetchNewUsersComparison(),
     fetchRecentGames(15),
     fetchRecentQuizzes(15),
     getCurrentUser(),
@@ -58,6 +60,13 @@ export async function initAdminDashboard() {
     renderTotalUsers(allUsers.length);
   } else {
     console.error('Failed to load users:', usersResult.reason?.message);
+  }
+
+  if (newUsersResult.status === 'fulfilled') {
+    const { thisWeek, lastWeek } = newUsersResult.value;
+    let pct = null;
+    if (lastWeek > 0) pct = Math.round(((thisWeek - lastWeek) / lastWeek) * 100);
+    renderTotalUsersPct(pct);
   }
 
   const recentUsers = recentResult.status === 'fulfilled'
@@ -87,6 +96,13 @@ export async function initAdminDashboard() {
     : [];
 
   renderRecentActivity(recentUsers, recentGames, recentQuizzes);
+
+  if (gamesTodayResult.status === 'fulfilled') {
+    const { today, yesterday } = gamesTodayResult.value;
+    let pct = null;
+    if (yesterday > 0) pct = Math.round(((today - yesterday) / yesterday) * 100);
+    renderGamesToday(today, pct);
+  }
 
   const dayCounts = [0, 0, 0, 0, 0, 0, 0];
   if (gamesResult.status === 'fulfilled') {
