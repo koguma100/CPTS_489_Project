@@ -1,6 +1,6 @@
 import { fetchAllUsers, fetchRecentUsers, banUser, unbanUser, getCurrentUser } from '../../models/userModel.js';
-import { fetchGamesThisWeek, fetchRecentGames, fetchRecentQuizzes } from '../../models/GameModel.js';
-import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart } from '../../views/admin/adminDashboardView.js';
+import { fetchAllGames, fetchGamesThisWeek, fetchRecentGames, fetchRecentQuizzes } from '../../models/GameModel.js';
+import { renderTotalUsers, renderUsers, renderFilterButtons, renderSection, renderRecentActivity, renderGamesChart, renderGames } from '../../views/admin/adminDashboardView.js';
 
 let allUsers = [];
 let activeFilter = 'all';
@@ -117,6 +117,23 @@ export function setStatusFilter(status, query = activeQuery) {
 export function showSection(name) {
   renderSection(name);
   if (name === 'users') renderUsers(getFilteredList());
+  if (name === 'games') loadGamesSection();
+}
+
+async function loadGamesSection() {
+  try {
+    const raw = await fetchAllGames();
+    const games = raw.map(g => ({
+      id: g.id,
+      quizTitle: g.quizzes?.title ?? '—',
+      phase: g.phase,
+      players: g.player_scores?.[0]?.count ?? 0,
+      createdAt: g.created_at,
+    }));
+    renderGames(games);
+  } catch (err) {
+    console.error('Failed to load games:', err.message);
+  }
 }
 
 export async function doBanUser(id) {

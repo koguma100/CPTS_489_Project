@@ -116,6 +116,43 @@ export function renderGamesChart(dayCounts) {
   `;
 }
 
+export function renderGames(games = []) {
+  const tbody = document.getElementById('games-tbody');
+  if (!tbody) return;
+
+  if (games.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-sm text-gray-400">No games found.</td></tr>`;
+    return;
+  }
+
+  function phaseLabel(phase) {
+    if (phase === 'lobby') return `<span class="bg-blaze-orange/10 text-blaze-orange text-xs font-bold px-2 py-1 rounded-lg">Lobby</span>`;
+    if (phase === 'question_active' || phase === 'question_end') return `<span class="bg-jungle-green/10 text-jungle-green text-xs font-bold px-2 py-1 rounded-lg">Live</span>`;
+    if (phase === 'game_over') return `<span class="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-lg">Ended</span>`;
+    return `<span class="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-lg">${phase}</span>`;
+  }
+
+  function timeAgo(iso) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  }
+
+  tbody.innerHTML = games.map((g, i) => `
+    <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+      <td class="px-6 py-4 font-mono text-xs text-midnight-violet">${g.id}</td>
+      <td class="px-6 py-4 text-gray-600">${g.quizTitle}</td>
+      <td class="px-6 py-4 text-gray-600">${g.players}</td>
+      <td class="px-6 py-4">${phaseLabel(g.phase)}</td>
+      <td class="px-6 py-4 text-gray-400 text-xs">${timeAgo(g.createdAt)}</td>
+    </tr>
+  `).join('');
+}
+
 export function renderRecentActivity(recentUsers = [], recentGames = [], recentQuizzes = []) {
   const container = document.getElementById('recent-activity');
   if (!container) return;

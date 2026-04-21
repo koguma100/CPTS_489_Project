@@ -328,6 +328,16 @@ export class GameModel {
 }
 
 // ─── Admin Functions ─────────────────────────────────────────────────────
+export async function fetchAllGames() {
+  const { data, error } = await supabase
+    .from('games')
+    .select('id, created_at, pin, phase, host, quizzes(title), player_scores(count)')
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
 export async function fetchRecentGames(limit = 3) {
   const { data, error } = await supabase
     .from('games')
