@@ -22,7 +22,6 @@
     { "source": "/game/view",         "destination": "/pages/game/view.html" },
     { "source": "/admin",             "destination": "/pages/admin/index.html" },
     { "source": "/admin/account",     "destination": "/pages/admin/account.html" },
-    { "source": "/admin/user",        "destination": "/pages/admin/viewUser.html" },
-    { "source": "/game/results",      "destination": "/pages/game/quizResults.html" }
+    { "source": "/admin/user",        "destination": "/pages/admin/viewUser.html" }
   ]
 }
