@@ -109,3 +109,14 @@ export async function getUserProfile(id) {
   if (error) throw new Error(error.message);
   return data;
 }
+
+export async function getUserProfileByEmail(email) {
+  const { data, error } = await supabase
+    .from('users')
+    .select('username, role')
+    .eq('email', email)
+    .single();
+
+  if (error) throw new Error(error.message);
+  return data;
+}
