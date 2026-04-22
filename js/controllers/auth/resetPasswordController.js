@@ -9,6 +9,6 @@ export async function handlePasswordReset(password, confirmPassword) {
 
 export async function handleForgotPassword(email) {
   if (!email) throw new Error('Please enter your email address.');
-  const redirectUrl = `${window.location.origin}/pages/resetPassword.html`;
+  const redirectUrl = `${window.location.origin}/reset-password`;
   await sendPasswordReset(email, redirectUrl);
 }
