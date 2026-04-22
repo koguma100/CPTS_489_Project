@@ -30,13 +30,13 @@
 
         <div>
           <label class="block text-sm font-medium mb-1">Username</label>
-          <input type="text" value="Player123"
+          <input id="field-username" type="text" placeholder="Loading…"
           class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-jungle-green">
         </div>
 
         <div>
           <label class="block text-sm font-medium mb-1">Email</label>
-          <input type="email" value="player@email.com"
+          <input id="field-email" type="email" placeholder="Loading…"
           class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-jungle-green">
         </div>
 
@@ -62,6 +62,11 @@
     </section>
 
   </main>
+
+  <script type="module">
+    import { initUserAccount } from '../js/controllers/user/userAccountController.js';
+    await initUserAccount();
+  </script>
 
 </body>
 </html>
