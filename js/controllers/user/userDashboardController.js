@@ -12,6 +12,7 @@ export async function initUserDashboard() {
 // controllers/dashboardController.js
 import {
   getCurrentUser,
+  getUserQuizzes,
   getQuizzes,
   getPastQuizzes,
   getRecommendedQuizzes
@@ -28,7 +29,8 @@ import {
 const carouselState = {
   quizTrack1: 0,
   quizTrack2: 0,
-  quizTrack3: 0
+  quizTrack3: 0,
+  quizTrack4: 0,
 };
 
 const visibleCount = 3;
@@ -49,19 +51,35 @@ function setupCarouselButtons(track, prevBtn, nextBtn) {
   });
 }
 
-async function loadQuizzes(view) {
+async function loadUserQuizzes(view, userId) {
+  if (!userId) {
+    renderCarousel(view.quizTrack1, [], 'You have not created any quizzes yet.');
+    return;
+  }
+  try {
+    const quizzes = await getUserQuizzes(userId);
+    renderCarousel(view.quizTrack1, quizzes, 'You have not created any quizzes yet.');
+    carouselState[view.quizTrack1.id] = 0;
+    updateCarousel(view.quizTrack1, 0);
+  } catch (err) {
+    console.error(err);
+    renderError(view.quizTrack1, `Could not load your quizzes: ${err.message}`);
+  }
+}
+
+async function loadAllQuizzes(view) {
   try {
     const quizzes = await getQuizzes({
       searchTerm: view.quizSearch.value,
       category: view.categoryFilter.value
     });
 
-    renderCarousel(view.quizTrack1, quizzes, 'No quizzes found.');
-    carouselState[view.quizTrack1.id] = 0;
-    updateCarousel(view.quizTrack1, 0);
+    renderCarousel(view.quizTrack4, quizzes, 'No quizzes found.');
+    carouselState[view.quizTrack4.id] = 0;
+    updateCarousel(view.quizTrack4, 0);
   } catch (err) {
     console.error(err);
-    renderError(view.quizTrack1, `Could not load quizzes: ${err.message}`);
+    renderError(view.quizTrack4, `Could not load quizzes: ${err.message}`);
   }
 }
 
@@ -98,24 +116,26 @@ function attachEvents(view) {
   setupCarouselButtons(view.quizTrack1, view.prevBtn1, view.nextBtn1);
   setupCarouselButtons(view.quizTrack2, view.prevBtn2, view.nextBtn2);
   setupCarouselButtons(view.quizTrack3, view.prevBtn3, view.nextBtn3);
+  setupCarouselButtons(view.quizTrack4, view.prevBtn4, view.nextBtn4);
 
   view.quizSearch.addEventListener('input', () => {
     clearTimeout(debounceTimer);
-    debounceTimer = setTimeout(() => loadQuizzes(view), 300);
+    debounceTimer = setTimeout(() => loadAllQuizzes(view), 300);
   });
 
-  view.categoryFilter.addEventListener('change', () => loadQuizzes(view));
+  view.categoryFilter.addEventListener('change', () => loadAllQuizzes(view));
 
   view.clearFiltersBtn.addEventListener('click', () => {
     view.quizSearch.value = '';
     view.categoryFilter.value = '';
-    loadQuizzes(view);
+    loadAllQuizzes(view);
   });
 
   window.addEventListener('resize', () => {
     updateCarousel(view.quizTrack1, carouselState.quizTrack1);
     updateCarousel(view.quizTrack2, carouselState.quizTrack2);
     updateCarousel(view.quizTrack3, carouselState.quizTrack3);
+    updateCarousel(view.quizTrack4, carouselState.quizTrack4);
   });
 }
 
@@ -130,8 +150,6 @@ export async function initDashboard() {
     console.error('Dashboard greeting init failed:', err);
   }
 
-  await loadQuizzes(view);
-
   let user = null;
   try {
     user = await getCurrentUser();
@@ -139,8 +157,10 @@ export async function initDashboard() {
     console.error('Could not get user:', err);
   }
 
+  await loadUserQuizzes(view, user?.id);
   await loadPastQuizzes(view, user?.id);
   await loadRecommendedQuizzes(view);
+  await loadAllQuizzes(view);
 }
 
 initDashboard();

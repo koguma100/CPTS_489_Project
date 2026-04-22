@@ -17,6 +17,7 @@ export function getDashboardElements() {
     quizTrack1: document.getElementById('quizTrack1'),
     quizTrack2: document.getElementById('quizTrack2'),
     quizTrack3: document.getElementById('quizTrack3'),
+    quizTrack4: document.getElementById('quizTrack4'),
     quizSearch: document.getElementById('quizSearch'),
     categoryFilter: document.getElementById('categoryFilter'),
     clearFiltersBtn: document.getElementById('clearFiltersBtn'),
@@ -25,25 +26,25 @@ export function getDashboardElements() {
     prevBtn2: document.getElementById('prevBtn2'),
     nextBtn2: document.getElementById('nextBtn2'),
     prevBtn3: document.getElementById('prevBtn3'),
-    nextBtn3: document.getElementById('nextBtn3')
+    nextBtn3: document.getElementById('nextBtn3'),
+    prevBtn4: document.getElementById('prevBtn4'),
+    nextBtn4: document.getElementById('nextBtn4'),
   };
 }
 
 export function createQuizCard(quiz, fallbackHref = '/game/host') {
-  const card = document.createElement('div');
-  card.className =
-    'min-w-[calc((100%-2rem)/3)] max-w-[calc((100%-2rem)/3)] bg-gray-50 rounded-xl shadow p-4 hover:shadow-lg transition flex-shrink-0';
-
+  const card = document.createElement('a');
   const href = quiz.id ? `${fallbackHref}?quizId=${quiz.id}` : '#';
+  card.href = href;
+  card.className =
+    'min-w-[calc((100%-2rem)/3)] max-w-[calc((100%-2rem)/3)] bg-gray-50 rounded-xl shadow p-4 hover:shadow-lg transition flex-shrink-0 block cursor-pointer';
 
   card.innerHTML = `
-    <a href="${href}">
-      <img
-        src="${quiz.thumbnail || quiz.image_url || 'https://via.placeholder.com/220x140?text=Quiz'}"
-        alt="${quiz.title || 'Quiz'}"
-        class="w-full h-36 object-cover rounded-lg mb-3 hover:brightness-110 transition cursor-pointer"
-      >
-    </a>
+    <img
+      src="${quiz.thumbnail || quiz.image_url || 'https://via.placeholder.com/220x140?text=Quiz'}"
+      alt="${quiz.title || 'Quiz'}"
+      class="w-full h-36 object-cover rounded-lg mb-3 hover:brightness-110 transition"
+    >
 
     <h3 class="text-lg font-semibold mb-2">${quiz.title || 'Untitled Quiz'}</h3>
 
