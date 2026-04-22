@@ -140,7 +140,7 @@
             </span>
           </div>
           <div class="display text-4xl text-midnight-violet" id="stat-total-users">—</div>
-          <div class="text-xs text-jungle-green mt-1">↑ 12% this week</div>
+          <div id="stat-total-users-pct" class="text-xs text-gray-400 mt-1">Loading…</div>
         </div>
 
         <div class="stat-card fade-in bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
@@ -164,34 +164,34 @@
               <svg class="w-4 h-4 text-berry-lipstick" viewBox="0 0 24 24" fill="currentColor"><path d="M15 7.5V2H9v5.5l3 3 3-3zM7.5 9H2v6h5.5l3-3-3-3zM9 16.5V22h6v-5.5l-3-3-3 3zM16.5 9l-3 3 3 3H22V9h-5.5z"/></svg>
             </span>
           </div>
-          <div class="display text-4xl text-midnight-violet">1,093</div>
-          <div class="text-xs text-berry-lipstick mt-1">↑ 8% vs yesterday</div>
+          <div id="stat-games-today" class="display text-4xl text-midnight-violet">—</div>
+          <div id="stat-games-today-pct" class="text-xs text-gray-400 mt-1">Loading…</div>
         </div>
 
         <div class="stat-card fade-in bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
           <div class="flex items-center justify-between mb-3">
-            <span class="text-xs uppercase tracking-widest text-gray-600">Avg. Session</span>
+            <span class="text-xs uppercase tracking-widest text-gray-600">Quizzes This Week</span>
             <span class="w-8 h-8 rounded-xl bg-royal-plum/10 grid place-items-center">
-              <svg class="w-4 h-4 text-royal-plum" viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>
+              <svg class="w-4 h-4 text-royal-plum" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H8a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h10v2H8a1 1 0 0 0-1 1h13V5a3 3 0 0 0-3-3z"/></svg>
             </span>
           </div>
-          <div class="display text-4xl text-midnight-violet">14m</div>
-          <div class="text-xs text-gray-600 mt-1">Per game session</div>
+          <div id="stat-quizzes-week" class="display text-4xl text-midnight-violet">—</div>
+          <div id="stat-quizzes-week-pct" class="text-xs text-gray-400 mt-1">Loading…</div>
         </div>
 
       </div>
 
       <!-- Recent Activity + Top Games -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="flex gap-6 items-start">
 
         <!-- Recent Activity -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex-1 min-w-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h2 class="display text-2xl text-midnight-violet mb-4 tracking-wide">Recent Activity</h2>
           <div id="recent-activity" class="space-y-3"></div>
         </div>
 
         <!-- Weekly bar chart -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+        <div class="flex-1 min-w-0 bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h2 class="display text-2xl text-midnight-violet mb-1 tracking-wide">Games This Week</h2>
           <p class="text-xs text-gray-600 mb-6">Daily games played</p>
           <div id="games-chart" class="w-full"></div>
@@ -307,45 +307,13 @@
             <tr class="border-b border-gray-100 bg-gray-50">
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Game ID</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Quiz</th>
-              <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Host</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Players</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Status</th>
               <th class="text-left px-6 py-3 text-xs uppercase tracking-widest text-gray-600 font-semibold">Time</th>
             </tr>
           </thead>
-          <tbody>
-            <tr class="user-row border-b border-gray-50 transition-colors">
-              <td class="px-6 py-4 font-bold text-midnight-violet">#4821</td>
-              <td class="px-6 py-4 text-gray-600">World Capitals</td>
-              <td class="px-6 py-4 text-gray-600">@jake_r</td>
-              <td class="px-6 py-4 text-gray-600">32</td>
-              <td class="px-6 py-4"><span class="bg-jungle-green/10 text-jungle-green text-xs font-bold px-2 py-1 rounded-lg">Live</span></td>
-              <td class="px-6 py-4 text-gray-600 text-xs">Started 8m ago</td>
-            </tr>
-            <tr class="user-row border-b border-gray-50 transition-colors">
-              <td class="px-6 py-4 font-bold text-midnight-violet">#4820</td>
-              <td class="px-6 py-4 text-gray-600">Movie Trivia</td>
-              <td class="px-6 py-4 text-gray-600">@sara_p</td>
-              <td class="px-6 py-4 text-gray-600">18</td>
-              <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-lg">Ended</span></td>
-              <td class="px-6 py-4 text-gray-600 text-xs">22m ago</td>
-            </tr>
-            <tr class="user-row border-b border-gray-50 transition-colors">
-              <td class="px-6 py-4 font-bold text-midnight-violet">#4819</td>
-              <td class="px-6 py-4 text-gray-600">Science Bowl</td>
-              <td class="px-6 py-4 text-gray-600">@leon_k</td>
-              <td class="px-6 py-4 text-gray-600">41</td>
-              <td class="px-6 py-4"><span class="bg-jungle-green/10 text-jungle-green text-xs font-bold px-2 py-1 rounded-lg">Live</span></td>
-              <td class="px-6 py-4 text-gray-600 text-xs">Started 14m ago</td>
-            </tr>
-            <tr class="user-row transition-colors">
-              <td class="px-6 py-4 font-bold text-midnight-violet">#4818</td>
-              <td class="px-6 py-4 text-gray-600">History 101</td>
-              <td class="px-6 py-4 text-gray-600">@mia_t</td>
-              <td class="px-6 py-4 text-gray-600">9</td>
-              <td class="px-6 py-4"><span class="bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-lg">Ended</span></td>
-              <td class="px-6 py-4 text-gray-600 text-xs">51m ago</td>
-            </tr>
+          <tbody id="games-tbody">
+            <tr><td colspan="5" class="px-6 py-8 text-center text-sm text-gray-400">Loading games…</td></tr>
           </tbody>
         </table>
       </div>

@@ -31,6 +31,39 @@ export function renderTotalUsers(count) {
   document.getElementById('stat-total-users').textContent = count;
 }
 
+export function renderTotalUsersPct(pct) {
+  const el = document.getElementById('stat-total-users-pct');
+  if (!el) return;
+  if (pct === null) { el.textContent = 'No data for last week'; el.className = 'text-xs text-gray-400 mt-1'; return; }
+  const up = pct >= 0;
+  el.textContent = `${up ? '↑' : '↓'} ${Math.abs(pct)}% this week`;
+  el.className = `text-xs mt-1 ${up ? 'text-jungle-green' : 'text-berry-lipstick'}`;
+}
+
+export function renderQuizzesThisWeek(count, pct) {
+  const el = document.getElementById('stat-quizzes-week');
+  if (el) el.textContent = count.toLocaleString();
+
+  const sub = document.getElementById('stat-quizzes-week-pct');
+  if (!sub) return;
+  if (pct === null) { sub.textContent = 'No data for last week'; sub.className = 'text-xs text-gray-400 mt-1'; return; }
+  const up = pct >= 0;
+  sub.textContent = `${up ? '↑' : '↓'} ${Math.abs(pct)}% this week`;
+  sub.className = `text-xs mt-1 ${up ? 'text-jungle-green' : 'text-berry-lipstick'}`;
+}
+
+export function renderGamesToday(count, pct) {
+  const el = document.getElementById('stat-games-today');
+  if (el) el.textContent = count.toLocaleString();
+
+  const sub = document.getElementById('stat-games-today-pct');
+  if (!sub) return;
+  if (pct === null) { sub.textContent = 'No data for yesterday'; sub.className = 'text-xs text-gray-400 mt-1'; return; }
+  const up = pct >= 0;
+  sub.textContent = `${up ? '↑' : '↓'} ${Math.abs(pct)}% vs yesterday`;
+  sub.className = `text-xs mt-1 ${up ? 'text-jungle-green' : 'text-berry-lipstick'}`;
+}
+
 export function renderUsers(list) {
   const tbody = document.getElementById('user-table-body');
   const noResults = document.getElementById('no-results');
@@ -116,29 +149,83 @@ export function renderGamesChart(dayCounts) {
   `;
 }
 
-export function renderRecentActivity(recentUsers) {
+export function renderGames(games = []) {
+  const tbody = document.getElementById('games-tbody');
+  if (!tbody) return;
+
+  if (games.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" class="px-6 py-8 text-center text-sm text-gray-400">No games found.</td></tr>`;
+    return;
+  }
+
+  function phaseLabel(phase) {
+    if (phase === 'lobby') return `<span class="bg-blaze-orange/10 text-blaze-orange text-xs font-bold px-2 py-1 rounded-lg">Lobby</span>`;
+    if (phase === 'question_active' || phase === 'question_end') return `<span class="bg-jungle-green/10 text-jungle-green text-xs font-bold px-2 py-1 rounded-lg">Live</span>`;
+    if (phase === 'game_over') return `<span class="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-lg">Ended</span>`;
+    return `<span class="bg-gray-100 text-gray-500 text-xs font-bold px-2 py-1 rounded-lg">${phase}</span>`;
+  }
+
+  function timeAgo(iso) {
+    const diff = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return 'Just now';
+    if (mins < 60) return `${mins}m ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs}h ago`;
+    return `${Math.floor(hrs / 24)}d ago`;
+  }
+
+  tbody.innerHTML = games.map((g, i) => `
+    <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
+      <td class="px-6 py-4 font-mono text-xs text-midnight-violet">${g.id}</td>
+      <td class="px-6 py-4 text-gray-600">${g.quizTitle}</td>
+      <td class="px-6 py-4 text-gray-600">${g.players}</td>
+      <td class="px-6 py-4">${phaseLabel(g.phase)}</td>
+      <td class="px-6 py-4 text-gray-400 text-xs">${timeAgo(g.createdAt)}</td>
+    </tr>
+  `).join('');
+}
+
+export function renderRecentActivity(recentUsers = [], recentGames = [], recentQuizzes = []) {
   const container = document.getElementById('recent-activity');
   if (!container) return;
-
-  const mockItems = [
-    { color: 'bg-blaze-orange', text: 'Game <span class="font-bold text-midnight-violet">#4821</span> completed — 32 players', time: '5m ago' },
-    { color: 'bg-berry-lipstick', text: 'User <span class="font-bold text-midnight-violet">@mia_t</span> flagged for review', time: '18m ago' },
-    { color: 'bg-royal-plum', text: 'Quiz <span class="font-bold text-midnight-violet">"World Capitals"</span> created', time: '44m ago' },
-  ];
 
   const userItems = recentUsers.map(u => ({
     color: 'bg-jungle-green',
     text: `New user <span class="font-bold text-midnight-violet">${u.username}</span> registered`,
     time: u.time,
+    _ts: u._ts,
   }));
 
-  const allItems = [...userItems, ...mockItems];
+  const gameItems = recentGames.map(g => ({
+    color: 'bg-blaze-orange',
+    text: `Game <span class="font-bold text-midnight-violet">#${g.pin}</span> started — <em>${g.quizTitle}</em>`,
+    time: g.time,
+    _ts: g._ts,
+  }));
 
+  const quizItems = recentQuizzes.map(q => ({
+    color: 'bg-royal-plum',
+    text: `Quiz <span class="font-bold text-midnight-violet">"${q.title}"</span> created`,
+    time: q.time,
+    _ts: q._ts,
+  }));
+
+  const allItems = [...userItems, ...gameItems, ...quizItems]
+    .sort((a, b) => b._ts - a._ts)
+    .slice(0, 15);
+
+  if (allItems.length === 0) {
+    container.innerHTML = `<p class="text-sm text-gray-400 text-center py-4">No recent activity.</p>`;
+    return;
+  }
+
+  container.className = 'overflow-y-auto max-h-96 space-y-0 pr-1';
   container.innerHTML = allItems.map((item, i) => `
     <div class="flex items-center gap-3 py-2 ${i < allItems.length - 1 ? 'border-b border-gray-50' : ''}">
       <span class="w-2 h-2 rounded-full ${item.color} flex-shrink-0"></span>
       <span class="text-sm text-gray-600 flex-1">${item.text}</span>
-      <span class="text-xs text-gray-600">${item.time}</span>
+      <span class="text-xs text-gray-400 whitespace-nowrap">${item.time}</span>
     </div>
   `).join('');
 }

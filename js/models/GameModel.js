@@ -328,6 +328,76 @@ export class GameModel {
 }
 
 // ─── Admin Functions ─────────────────────────────────────────────────────
+export async function fetchAllGames() {
+  const { data, error } = await supabase
+    .from('games')
+    .select('id, created_at, pin, phase, host, quizzes(title), player_scores(count)')
+    .order('created_at', { ascending: false });
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function fetchRecentGames(limit = 3) {
+  const { data, error } = await supabase
+    .from('games')
+    .select('id, created_at, pin, phase, quizzes(title)')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function fetchQuizzesComparison() {
+  const now = new Date();
+  const thisWeekStart = new Date(now);
+  thisWeekStart.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  thisWeekStart.setHours(0, 0, 0, 0);
+
+  const lastWeekStart = new Date(thisWeekStart);
+  lastWeekStart.setDate(lastWeekStart.getDate() - 7);
+
+  const [thisWeekRes, lastWeekRes] = await Promise.all([
+    supabase.from('quizzes').select('id', { count: 'exact', head: true }).gte('created_at', thisWeekStart.toISOString()),
+    supabase.from('quizzes').select('id', { count: 'exact', head: true }).gte('created_at', lastWeekStart.toISOString()).lt('created_at', thisWeekStart.toISOString()),
+  ]);
+
+  if (thisWeekRes.error) throw new Error(thisWeekRes.error.message);
+  if (lastWeekRes.error) throw new Error(lastWeekRes.error.message);
+
+  return { thisWeek: thisWeekRes.count ?? 0, lastWeek: lastWeekRes.count ?? 0 };
+}
+
+export async function fetchRecentQuizzes(limit = 3) {
+  const { data, error } = await supabase
+    .from('quizzes')
+    .select('id, created_at, title')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+export async function fetchGamesToday() {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const yesterdayStart = new Date(todayStart);
+  yesterdayStart.setDate(yesterdayStart.getDate() - 1);
+
+  const [todayRes, yesterdayRes] = await Promise.all([
+    supabase.from('games').select('id', { count: 'exact', head: true }).gte('created_at', todayStart.toISOString()),
+    supabase.from('games').select('id', { count: 'exact', head: true }).gte('created_at', yesterdayStart.toISOString()).lt('created_at', todayStart.toISOString()),
+  ]);
+
+  if (todayRes.error) throw new Error(todayRes.error.message);
+  if (yesterdayRes.error) throw new Error(yesterdayRes.error.message);
+
+  return { today: todayRes.count ?? 0, yesterday: yesterdayRes.count ?? 0 };
+}
+
 export async function fetchGamesThisWeek() {
   const now = new Date();
   const dayOfWeek = now.getDay(); // 0 = Sunday
