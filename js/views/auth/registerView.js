@@ -21,7 +21,7 @@ export function init() {
       const data = await handleRegister(email, username, password, confirm);
       if (data.session) {
         title.textContent = 'Account Created!';
-        window.location.href = 'userDashboard.html';
+        window.location.href = '/dashboard';
       } else {
         // Email confirmation required
         title.textContent = 'Account Created!';

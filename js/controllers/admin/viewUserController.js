@@ -57,13 +57,13 @@ export async function executeAction() {
       renderBanButton(false);
       showToast(`${display} has been unbanned`);
     } else if (action === 'reset') {
-      const redirectUrl = `${window.location.origin}/pages/resetPassword.html`;
+      const redirectUrl = `${window.location.origin}/reset-password`;
       await sendPasswordReset(user.email, redirectUrl);
       showToast(`Reset link sent to ${user.email}`);
     } else if (action === 'delete') {
       await deleteUser(user.id);
       showToast('Account deleted');
-      setTimeout(() => { window.location.href = 'index.html'; }, 1500);
+      setTimeout(() => { window.location.href = '/admin'; }, 1500);
     }
   } catch (err) {
     showToast('Error: ' + err.message);
@@ -72,7 +72,7 @@ export async function executeAction() {
 
 export async function initViewUser() {
   const id = new URLSearchParams(window.location.search).get('id');
-  if (!id) { window.location.href = 'index.html'; return; }
+  if (!id) { window.location.href = '/admin'; return; }
 
   try {
     const [userData, adminUser] = await Promise.all([fetchUserById(id), getCurrentUser()]);

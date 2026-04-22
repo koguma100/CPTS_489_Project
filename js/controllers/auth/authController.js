@@ -12,7 +12,7 @@ export async function handleLogin(emailOrUsername, password) {
 
 export async function getLoginRedirect(userId) {
   const profile = await getUserProfile(userId).catch(() => null);
-  return profile?.role === 'admin' ? 'admin/index.html' : 'userDashboard.html';
+  return profile?.role === 'admin' ? '/admin' : '/dashboard';
 }
 
 export async function handleRegister(email, username, password, confirmPassword) {
@@ -20,6 +20,6 @@ export async function handleRegister(email, username, password, confirmPassword)
   const trimmed = username.trim();
   if (trimmed.length < 3) throw new Error('Username must be at least 3 characters.');
   if (await isUsernameTaken(trimmed)) throw new Error('That username is already taken.');
-  const redirectUrl = `${window.location.origin}/pages/confirmed.html`;
+  const redirectUrl = `${window.location.origin}/confirmed`;
   return await signUp(email, password, trimmed, redirectUrl);
 }

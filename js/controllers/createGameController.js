@@ -62,7 +62,7 @@ async function handleCreateGameSubmit(event) {
     });
 
     showMessage(view.formMessage, 'Quiz created successfully.', 'success');
-    window.location.href = 'buildQuestions.html';
+    window.location.href = '/build-questions';
   } catch (err) {
     console.error(err);
     showMessage(
@@ -106,7 +106,7 @@ async function handleBuildQuestionsSubmit(event) {
 
     clearQuizSetupFromSession();
     showMessage(view.formMessage, 'Questions saved successfully.', 'success');
-    window.location.href = 'index.html';
+    window.location.href = '/';
   } catch (err) {
     console.error(err);
     showMessage(view.formMessage, err.message || 'Failed to save questions.');

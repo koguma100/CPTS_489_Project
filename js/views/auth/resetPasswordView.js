@@ -17,7 +17,7 @@ export function init() {
 
     try {
       await handlePasswordReset(password, confirm);
-      window.location.href = 'login.html';
+      window.location.href = '/login';
     } catch (err) {
       errorEl.textContent = err.message;
       errorEl.classList.remove('hidden');

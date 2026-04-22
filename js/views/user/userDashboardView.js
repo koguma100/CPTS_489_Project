@@ -2,7 +2,7 @@ import { initUserDashboard } from '../../controllers/user/userDashboardControlle
 
 export async function init() {
   const data = await initUserDashboard();
-  if (!data) { window.location.replace('login.html'); return; }
+  if (!data) { window.location.replace('/login'); return; }
   renderGreeting(data.name);
 }
 
@@ -29,7 +29,7 @@ export function getDashboardElements() {
   };
 }
 
-export function createQuizCard(quiz, fallbackHref = '/pages/game/hostLobby.html') {
+export function createQuizCard(quiz, fallbackHref = '/game/host') {
   const card = document.createElement('div');
   card.className =
     'min-w-[calc((100%-2rem)/3)] max-w-[calc((100%-2rem)/3)] bg-gray-50 rounded-xl shadow p-4 hover:shadow-lg transition flex-shrink-0';

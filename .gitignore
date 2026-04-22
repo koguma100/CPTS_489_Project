@@ -9,3 +9,4 @@ config/env.js
 node_modules/
 
 node_modules/
+.vercel
