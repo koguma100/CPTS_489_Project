@@ -48,14 +48,22 @@ const NAV_LINKS_AUTH = `
 
 class NavbarComponent extends HTMLElement {
   async connectedCallback() {
+    if (!document.querySelector('link[data-lr-font]')) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap';
+      link.dataset.lrFont = '';
+      document.head.appendChild(link);
+    }
+
     const { isLoggedIn } = await getNavbarState();
 
     this.innerHTML = `
       <header class="bg-midnight-violet shadow-lg">
         <div class="px-6 py-3 flex items-center justify-between">
           <div class="flex items-center gap-8">
-            <a href="${isLoggedIn ? '/dashboard' : '/'}" class="flex items-center gap-2 text-white font-extrabold text-lg">
-              <div class="tracking-wide">Let It Ride</div>
+            <a href="${isLoggedIn ? '/dashboard' : '/'}" class="flex items-center gap-2">
+              <span style="font-family:'Bebas Neue',sans-serif;" class="text-white text-2xl tracking-widest">Let It Ride</span>
             </a>
             <nav class="hidden md:flex items-center gap-2">
               ${isLoggedIn ? NAV_LINKS_AUTH : NAV_LINKS_PUBLIC}
