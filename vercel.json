@@ -1,27 +1,45 @@
 {
   "outputDirectory": ".",
+  "headers": [
+    {
+      "source": "/config/(.*).js",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/javascript; charset=utf-8"
+        }
+      ]
+    }
+  ],
   "rewrites": [
-    { "source": "/components/:path*", "destination": "/pages/components/:path*" },
-    { "source": "/",                  "destination": "/pages/index.html" },
-    { "source": "/login",             "destination": "/pages/login.html" },
-    { "source": "/register",          "destination": "/pages/register.html" },
-    { "source": "/reset-password",    "destination": "/pages/resetPassword.html" },
-    { "source": "/confirmed",         "destination": "/pages/confirmed.html" },
-    { "source": "/join",              "destination": "/pages/joinGame.html" },
-    { "source": "/dashboard",         "destination": "/pages/userDashboard.html" },
-    { "source": "/account",           "destination": "/pages/userAccount.html" },
-    { "source": "/inbox",             "destination": "/pages/userInbox.html" },
-    { "source": "/create",            "destination": "/pages/creategame.html" },
-    { "source": "/build-questions",   "destination": "/pages/buildQuestions.html" },
-    { "source": "/modify-quiz",       "destination": "/pages/modifyQuiz.html" },
-    { "source": "/quiz-details",      "destination": "/pages/QuizDetails.html" },
-    { "source": "/game",              "destination": "/pages/game/index.html" },
-    { "source": "/game/lobby",        "destination": "/pages/game/playerLobby.html" },
-    { "source": "/game/play",         "destination": "/pages/game/player.html" },
-    { "source": "/game/host",         "destination": "/pages/game/hostQuizView.html" },
-    { "source": "/game/view",         "destination": "/pages/game/view.html" },
-    { "source": "/admin",             "destination": "/pages/admin/index.html" },
-    { "source": "/admin/account",     "destination": "/pages/admin/account.html" },
-    { "source": "/admin/user",        "destination": "/pages/admin/viewUser.html" }
+    { "source": "/config/:path*",      "destination": "/config/:path*" },
+
+    { "source": "/components/:path*",  "destination": "/pages/components/:path*" },
+
+    { "source": "/",                   "destination": "/pages/index.html" },
+    { "source": "/login",              "destination": "/pages/login.html" },
+    { "source": "/register",           "destination": "/pages/register.html" },
+    { "source": "/reset-password",     "destination": "/pages/resetPassword.html" },
+    { "source": "/confirmed",          "destination": "/pages/confirmed.html" },
+    { "source": "/join",               "destination": "/pages/joinGame.html" },
+
+    { "source": "/dashboard",          "destination": "/pages/userDashboard.html" },
+    { "source": "/account",            "destination": "/pages/userAccount.html" },
+    { "source": "/inbox",              "destination": "/pages/userInbox.html" },
+
+    { "source": "/create",             "destination": "/pages/creategame.html" },
+    { "source": "/build-questions",    "destination": "/pages/buildQuestions.html" },
+    { "source": "/modify-quiz",        "destination": "/pages/modifyQuiz.html" },
+    { "source": "/quiz-details",       "destination": "/pages/QuizDetails.html" },
+
+    { "source": "/game",               "destination": "/pages/game/index.html" },
+    { "source": "/game/lobby",         "destination": "/pages/game/playerLobby.html" },
+    { "source": "/game/play",          "destination": "/pages/game/player.html" },
+    { "source": "/game/host",          "destination": "/pages/game/hostQuizView.html" },
+    { "source": "/game/view",          "destination": "/pages/game/view.html" },
+
+    { "source": "/admin",              "destination": "/pages/admin/index.html" },
+    { "source": "/admin/account",      "destination": "/pages/admin/account.html" },
+    { "source": "/admin/user",         "destination": "/pages/admin/viewUser.html" }
   ]
 }
