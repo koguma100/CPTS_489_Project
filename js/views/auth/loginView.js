@@ -16,7 +16,7 @@ export function init() {
 
     try {
       const { user } = await handleLogin(emailOrUsername, password);
-      const redirect = await getLoginRedirect(user.id);
+      const redirect = await getLoginRedirect(user.email);
       window.location.href = redirect;
     } catch (err) {
       errorEl.textContent = err.message;

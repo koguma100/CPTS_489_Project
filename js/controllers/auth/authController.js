@@ -1,5 +1,5 @@
 import { signIn, signUp, isUsernameTaken, fetchEmailByUsername } from '../../models/authModel.js';
-import { getUserProfile } from '../../models/userModel.js';
+import { getUserProfileByEmail } from '../../models/userModel.js';
 
 export async function handleLogin(emailOrUsername, password) {
   if (!emailOrUsername) throw new Error('Please enter your email or username.');
@@ -10,8 +10,8 @@ export async function handleLogin(emailOrUsername, password) {
   return await signIn(email, password);
 }
 
-export async function getLoginRedirect(userId) {
-  const profile = await getUserProfile(userId).catch(() => null);
+export async function getLoginRedirect(email) {
+  const profile = await getUserProfileByEmail(email).catch(() => null);
   return profile?.role === 'admin' ? '/admin' : '/dashboard';
 }
 
