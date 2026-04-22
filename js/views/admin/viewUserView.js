@@ -1,6 +1,8 @@
 import { initViewUser, confirmAction, doCloseModal, executeAction } from '../../controllers/admin/viewUserController.js';
+import { requireAdmin } from '../../utils/requireAdmin.js';
 
 export async function init() {
+  if (!await requireAdmin()) return;
   await initViewUser();
   window.confirmAction = confirmAction;
   window.closeModal    = doCloseModal;

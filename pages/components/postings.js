@@ -51,7 +51,7 @@ function renderQuizzes() {
 
     quizzes.forEach((quiz) => {
         const card = document.createElement("a");
-        card.href = `QuizDetails.html?id=${quiz.id}`;
+        card.href = `/quiz-details?id=${quiz.id}`;
         card.className = `
         bg-white rounded-2xl shadow-md overflow-hidden
         hover:shadow-xl hover:-translate-y-1 transition duration-200

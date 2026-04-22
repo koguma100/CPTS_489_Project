@@ -8,6 +8,7 @@
     <!-- Link to the Tailwind CSS output file -->
     <link href="../public/output.css" rel="stylesheet">
     
+<script src="/public/js/config.js"></script>
 </head>
 
 
@@ -97,7 +98,7 @@
       sessionStorage.setItem('gamePin', pin)
 
       // Redirect to lobby
-      window.location.href = '/pages/game/playerLobby.html'
+      window.location.href = '/game/lobby'
 
     } catch (err) {
       showError(err.message.includes('No rows')

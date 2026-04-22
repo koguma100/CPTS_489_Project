@@ -4,6 +4,7 @@
   "description": "Project for WSU's CPTS 389 Web Development course. A dynamic, database-driven, JavaScript web application will be complete by the end of the semester",
   "main": "index.js",
   "scripts": {
+    "build": "npx tailwindcss -i ./css/input.css -o ./public/output.css",
     "build:css": "npx tailwindcss -i ./css/input.css -o ./public/output.css",
     "watch:css": "npx tailwindcss -i ./css/input.css -o ./public/output.css --watch"
   },
