@@ -1,6 +1,8 @@
 import { initAdminDashboard, applyFilter, setStatusFilter, showSection, doBanUser, doUnbanUser } from '../../controllers/admin/adminController.js';
+import { requireAdmin } from '../../utils/requireAdmin.js';
 
 export async function init() {
+  if (!await requireAdmin()) return;
   await initAdminDashboard();
 
   window.showSection    = (name) => showSection(name);

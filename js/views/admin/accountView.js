@@ -1,6 +1,8 @@
 import { initAccount, handleMarkRead, handleFilterMessages } from '../../controllers/admin/accountController.js';
+import { requireAdmin } from '../../utils/requireAdmin.js';
 
-export function init() {
+export async function init() {
+  if (!await requireAdmin()) return;
   window.markRead = (id) => handleMarkRead(id);
   window.filterMessages = (filter) => handleFilterMessages(filter);
   initAccount();
