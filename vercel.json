@@ -20,6 +20,7 @@
     { "source": "/login",              "destination": "/pages/login.html" },
     { "source": "/register",           "destination": "/pages/register.html" },
     { "source": "/reset-password",     "destination": "/pages/resetPassword.html" },
+    { "source": "/reset-passwordLink", "destination": "/pages/EmailsendPasswordlink.html" },
     { "source": "/confirmed",          "destination": "/pages/confirmed.html" },
     { "source": "/join",               "destination": "/pages/joinGame.html" },
 

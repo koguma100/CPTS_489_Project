@@ -57,7 +57,7 @@ export async function executeAction() {
       renderBanButton(false);
       showToast(`${display} has been unbanned`);
     } else if (action === 'reset') {
-      const redirectUrl = `${window.location.origin}/reset-password`;
+      const redirectUrl = `${window.location.origin}/reset-passwordLink`;
       await sendPasswordReset(user.email, redirectUrl);
       showToast(`Reset link sent to ${user.email}`);
     } else if (action === 'delete') {
