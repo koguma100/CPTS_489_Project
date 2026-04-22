@@ -7,12 +7,6 @@ const NAV_LINKS_PUBLIC = `
     </span>
     Discover
   </a>
-  <a href="#" class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl text-white font-semibold bg-blaze-orange shadow ring-1 ring-white/15 hover:brightness-110 transition">
-    <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
-      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2H8a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h10v2H8a1 1 0 0 0-1 1h13V5a3 3 0 0 0-3-3z"/></svg>
-    </span>
-    Learn
-  </a>
   <a href="/register" class="flex items-center justify-center gap-2 w-28 py-2 text-sm rounded-xl text-white font-semibold bg-berry-lipstick shadow ring-1 ring-white/15 hover:brightness-110 transition">
     <span class="grid place-items-center w-7 h-7 rounded-xl bg-white/15 ring-1 ring-white/10">
       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.8 9.95l-3.75-3.75L3 17.25zM20.7 7.05a1 1 0 0 0 0-1.4L18.35 3.3a1 1 0 0 0-1.4 0l-1.8 1.8 3.75 3.75 1.8-1.8z"/></svg>
